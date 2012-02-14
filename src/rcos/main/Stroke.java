@@ -2,7 +2,7 @@ package rcos.main;
 
 import java.util.ArrayList;
 import android.graphics.Paint;
-import android.graphics.Point;
+import android.graphics.PointF;
 
 //
 // Stroke
@@ -12,7 +12,7 @@ import android.graphics.Point;
 //
 public class Stroke {
 	public Stroke() {
-		Points = new ArrayList<Point>();
+		Points = new ArrayList<PointF>();
 		Paint = new Paint();
 		
 		// Just use a random color for now
@@ -25,7 +25,7 @@ public class Stroke {
 	}
 	
 	// The list of points in this stroke
-	public ArrayList<Point> Points;
+	public ArrayList<PointF> Points;
 	
 	// The paint to use when drawing this stroke
 	public Paint Paint;

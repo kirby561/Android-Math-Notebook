@@ -3,10 +3,9 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/hello" />
+    
+    <rcos.main.NotesCanvas android:id="@+id/Canvas" android:layout_width="fill_parent"
+ 		android:layout_height="fill_parent">
+	</rcos.main.NotesCanvas>
 
 </LinearLayout>
