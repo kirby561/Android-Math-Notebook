@@ -243,8 +243,9 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		case MotionEvent.ACTION_DOWN:
 			Log.d("NotesCanvas", "Action_Down, _gestureState=" + _gestureState + ", count=" + pointerCount);
 			synchronized (DrawingLock) {
+				updateInverseViewTransform();
+				
 				_currentStroke = new Stroke();
-				_strokes.add(_currentStroke);
 				_gestureState = Drawing;
 
 				float x = event.getX();
@@ -324,6 +325,8 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 			Log.d("NotesCanvas", "Action_Up, _gestureState=" + _gestureState + ", count=" + pointerCount);
 			if (_gestureState == Drawing) {
 				synchronized (DrawingLock) {
+					updateInverseViewTransform();
+					
 					float x = event.getX();
 					float y = event.getY();
 
@@ -335,6 +338,8 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
 					// Add the point to the current stroke
 					_currentStroke.Points.add(p);
+
+					_strokes.add(_currentStroke);
 				}
 			}
 
@@ -533,6 +538,9 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 			// Just draw all the strokes we're keeping track of for now
 			for (Stroke stroke : _strokes)
 				drawStroke(canvas, stroke);
+			
+			if (_gestureState == Drawing)
+				drawStroke(canvas, _currentStroke);
 		}
 
 	}
