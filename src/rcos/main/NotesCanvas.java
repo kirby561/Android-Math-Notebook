@@ -31,47 +31,55 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	private Matrix _viewTransform = new Matrix();
 	private Matrix _invViewTransform = new Matrix();
 	private int _mode;
-	
+
 	// Vars for touch events
 	private float _origDistance;
-	private PointF _origCenter;
 	private Matrix _origTransform;
+	private Matrix _origInvTransform;
 	private Stroke _currentStroke;
-	private PointF _lastSpot;
-	
+	private PointF _zoomCenter;
+	private int _gestureState;
+
 	// Modes
 	public final int FreehandMode = 0;
 	public final int RecognitionMode = 1;
 	public final int MathMode = 2;
 	public final int EraseMode = 3;
-	
+
+	// Gesture States
+	public final int None = 0;
+	public final int Drawing = 1;
+	public final int Panning = 2;
+	public final int Zooming = 3;
+
 	// Constants
 	public final float TranslationPressureThreshold = 0.05f;
-	
+	public final int DrawingPointThreshold = 5;
+
 	public Object DrawingLock = new Object();
-	
+
 	public void setMode(int mode) {
 		_mode = mode;
 	}
-	
+
 	public int getMode() {
 		return _mode;
 	}
-	
+
 	private void initialize() {
 		// Initialize the drawing thread and the strokes array
 		_drawingThread = new DrawingThread(getHolder(), this);
-        _strokes = new ArrayList<Stroke>();
-        _currentStroke = null;
-        _origCenter = null;
-        
-        _background = getDefaultBackground();
-        
-        // Register for surface callbacks
+		_strokes = new ArrayList<Stroke>();
+		_currentStroke = null;
+		_gestureState = None;
+
+		_background = getDefaultBackground();
+
+		// Register for surface callbacks
 		getHolder().addCallback(this);
-        setFocusable(true);
+		setFocusable(true);
 	}
-	
+
 	public NotesCanvas(Context context) {
 		super(context);
 		initialize();
@@ -81,13 +89,13 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		super(context, attrs);
 		initialize();
 	}
-	
+
 	// Returns a list of strokes that creates a standard
 	// 8.5x11 inch notebook page
 	private Stroke[] getDefaultBackground() {
 		// Just draw normal 8.5x11" page at 72 DPI
 		Stroke[] result = new Stroke[40];
-		
+
 		// Red line
 		Paint red = new Paint();
 		red.setStrokeWidth(4);
@@ -97,7 +105,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		redLine.Points.add(new PointF(75,11.5f*72));
 		redLine.Paint = red;
 		result[0] = redLine;
-		
+
 		// Blue lines
 		int offset = 88;
 		int spacing = 18;
@@ -114,7 +122,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 			blueStroke.Paint = blue;
 			result[i+1] = blueStroke;
 		}
-		
+
 		return result;
 	}
 
@@ -124,29 +132,29 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	}
 
 	public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
-		
+
 	}
 
 	public void surfaceCreated(SurfaceHolder holder) {
 		// Start the drawing thread
 		_drawingThread.setRunning(true);
-        _drawingThread.start();
+		_drawingThread.start();
 	}
 
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		// Clean up the drawing thread
-        boolean retry = true;
-        _drawingThread.setRunning(false);
-        while (retry) {
-                try {
-                    _drawingThread.join();
-                    retry = false;
-                } catch (InterruptedException e) {
-                	// Keep trying
-                }
-        }
+		boolean retry = true;
+		_drawingThread.setRunning(false);
+		while (retry) {
+			try {
+				_drawingThread.join();
+				retry = false;
+			} catch (InterruptedException e) {
+				// Keep trying
+			}
+		}
 	}
-	
+
 	// Updates the inverse if applicable
 	public void updateInverseViewTransform() {
 		if (_invViewTransform == null) {
@@ -154,7 +162,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 			_viewTransform.invert(_invViewTransform);
 		}
 	}
-	
+
 	// Transforms p using the inverse view transform and
 	// returns the new location
 	private PointF getInvViewTransform(PointF p) {
@@ -163,10 +171,10 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		pArray[0] = p.x;
 		pArray[1] = p.y;
 		_invViewTransform.mapPoints(pArray);
-		
+
 		return new PointF(pArray[0], pArray[1]);
 	}
-	
+
 	// Transforms p using the view transform and
 	// returns the new location
 	private PointF getViewTransform(PointF p) {
@@ -174,38 +182,50 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		pArray[0] = p.x;
 		pArray[1] = p.y;
 		_viewTransform.mapPoints(pArray);
-		
+
 		return new PointF(pArray[0], pArray[1]);
 	}
 	
+	// Applies the given transform to the given point
+	private PointF applyTransform(Matrix transform, PointF point) {
+		float points[] = new float[2];
+
+		points[0] = point.x;
+		points[1] = point.y;
+
+		transform.mapPoints(points);
+
+		return new PointF(points[0], points[1]);
+	}
+
 	// Applies the inverse of the given transform to the given point
 	private PointF applyInvTransform(Matrix transform, PointF point) {
 		float points[] = new float[2];
-		
+
 		points[0] = point.x;
 		points[1] = point.y;
-		
+
 		Matrix inv = new Matrix();
 		transform.invert(inv);
-		
+
 		inv.mapPoints(points);
-		
+
 		return new PointF(points[0], points[1]);
 	}
-	
+
 	// Returns the distance between points p1 and p2
 	private float getDistance(PointF p1, PointF p2) {
 		float dx = p1.x - p2.x;
 		float dy = p1.y - p2.y;
-		
+
 		return (float)Math.sqrt(dx * dx + dy * dy);
 	}
-	
+
 	// Returns the difference of p2 - p1
 	private PointF getDifference(PointF p1, PointF p2) {
 		return new PointF(p2.x - p1.x, p2.y - p1.y);
 	}
-	
+
 	// Returns the center of points p1 and p2
 	private PointF getCenter(PointF p1, PointF p2) {
 		PointF result = new PointF();
@@ -213,88 +233,164 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		result.y = Math.round((p1.y + p2.y) / 2.0f);
 		return result;
 	}
-	
-    @Override
+
+	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-    	int actionCode = event.getActionMasked();
-    	int pointerCount = event.getPointerCount();
-    	
-    	switch (actionCode) {
-    	case MotionEvent.ACTION_DOWN:
-    		
-    		break;
-    	case MotionEvent.ACTION_MOVE:
-			synchronized(DrawingLock) {
-				updateInverseViewTransform();
-				
-				float[] point = {event.getX(), event.getY()};
-				
+		int action = event.getActionMasked();
+		int pointerCount = event.getPointerCount();
+
+		switch (action) {
+		case MotionEvent.ACTION_DOWN:
+			Log.d("NotesCanvas", "Action_Down, _gestureState=" + _gestureState + ", count=" + pointerCount);
+			synchronized (DrawingLock) {
+				_currentStroke = new Stroke();
+				_strokes.add(_currentStroke);
+				_gestureState = Drawing;
+
 				float x = event.getX();
 				float y = event.getY();
-				
+
 				// Get the point it occurred at
 				PointF p = new PointF(x, y);
-				
+
 				// Put it in page coordinates
 				p = getInvViewTransform(p);
-				
-				if (_lastSpot != null) {
-					_lastSpot = null;
-					return true;
-				}
+
+				// Add the point to the current stroke
+				_currentStroke.Points.add(p);
+			}
+			break;
+		case MotionEvent.ACTION_MOVE:
+			Log.d("NotesCanvas", "Action_Move, _gestureState=" + _gestureState + ", count=" + pointerCount);
+			synchronized(DrawingLock) {				
+				updateInverseViewTransform();
+
+				if (_gestureState == Zooming && pointerCount == 2) {
+
+					PointF p1 = new PointF(event.getX(0), event.getY(0));
+					PointF p2 = new PointF(event.getX(1), event.getY(1));
 					
-					// If there is no current stroke,
-					// this must be an ACTION_DOWN, so create
-					// one and add it to the list
-					if (_currentStroke == null) {
-						_currentStroke = new Stroke();
-						_strokes.add(_currentStroke);
+					// Put these in page coordinates
+					p1 = applyTransform(_origInvTransform, p1);
+					p2 = applyTransform(_origInvTransform, p2);
+
+					float dx = p2.x - p1.x;
+					float dy = p2.y - p1.y;
+					float dist = (float)Math.sqrt(dx * dx + dy * dy);
+					float ratio = 1;
+
+					if (_origDistance <= 0) {
+						_zoomCenter = new PointF((p1.x + p2.x) / 2, (p1.y + p2.y)/ 2);
+						_origDistance = dist;
+					} else {
+						ratio = dist / _origDistance;
 					}
-				
+
+					float[] vals = new float[9];
+					_origTransform.getValues(vals);
+
+					float initScale = vals[Matrix.MSCALE_X];
+					float initTransX = vals[Matrix.MTRANS_X];
+					float initTransY = vals[Matrix.MTRANS_Y];
+
+					vals[Matrix.MSCALE_X] = initScale * ratio;
+					vals[Matrix.MSCALE_Y] = initScale * ratio;
+					vals[Matrix.MTRANS_X] =  initTransX - initScale * (_zoomCenter.x * ratio - _zoomCenter.x);
+					vals[Matrix.MTRANS_Y] =  initTransY - initScale * (_zoomCenter.y * ratio - _zoomCenter.y);
+
+					_viewTransform.setValues(vals);
+
+				} else if (_gestureState == Drawing) {
+
+					float x = event.getX();
+					float y = event.getY();
+
+					// Get the point it occurred at
+					PointF p = new PointF(x, y);
+
+					// Put it in page coordinates
+					p = getInvViewTransform(p);
+
 					// Add the point to the current stroke
 					_currentStroke.Points.add(p);
-				
-					// If this was an ACTION_UP, clear the current stroke
-					if (action == MotionEvent.ACTION_UP) {
-						_currentStroke = null;	
-					}
-					
-					_origCenter = null;
-				}
-//			}	
 
-    		break;
-    	case MotionEvent.ACTION_UP:
-    		break;
-    		
-    	case MotionEvent.ACTION_POINTER_DOWN:
-    		break;
-    	
-    	}
-    	
-    	
-    	/*
+				} else if (_gestureState == Panning) {
+
+				}
+			}
+
+			break;
+		case MotionEvent.ACTION_UP:
+			Log.d("NotesCanvas", "Action_Up, _gestureState=" + _gestureState + ", count=" + pointerCount);
+			if (_gestureState == Drawing) {
+				synchronized (DrawingLock) {
+					float x = event.getX();
+					float y = event.getY();
+
+					// Get the point it occurred at
+					PointF p = new PointF(x, y);
+
+					// Put it in page coordinates
+					p = getInvViewTransform(p);
+
+					// Add the point to the current stroke
+					_currentStroke.Points.add(p);
+				}
+			}
+
+			_gestureState = None;
+			break;
+
+		case MotionEvent.ACTION_POINTER_DOWN:
+			Log.d("NotesCanvas", "Action_Pointer_Down, _gestureState=" + _gestureState + ", count=" + pointerCount);
+			synchronized(DrawingLock) {
+				updateInverseViewTransform();
+
+				// Cancel any current drawing if it is still small
+				//if ((_gestureState == Drawing && _currentStroke != null && _currentStroke.Points.size() < DrawingPointThreshold) || _gestureState != Drawing) {
+
+					// 2 Fingers down, we're zooming
+					_gestureState = Zooming;
+					_origDistance = -1;
+					_origTransform = new Matrix(_viewTransform);
+					_origInvTransform = new Matrix(_invViewTransform);
+				//}
+			}
+			break;
+		case MotionEvent.ACTION_POINTER_UP:
+			Log.d("NotesCanvas", "Action_Pointer_Up, _gestureState=" + _gestureState + ", count=" + pointerCount);
+			if (pointerCount < 2) {
+				// Done zooming
+				_gestureState = None;
+			}
+			break;
+		}
+
+		return true;
+
+
+		/*
 		int count = event.getPointerCount();
-		
+
 		// If only one pointer is down
 		if (count == 1) {
 			// Get the action (up/down/move etc..)
 			int action = event.getActionMasked();
-			
+
 			synchronized(DrawingLock) {
 				updateInverseViewTransform();
-				
+
 				float[] point = {event.getX(), event.getY()};
-				
+
 				float x = event.getX();
 				float y = event.getY();
-				
+
 				// Get the point it occurred at
 				PointF p = new PointF(x, y);
-				
+
 				// Put it in page coordinates
 				p = getInvViewTransform(p);
-				
+
 				// Two fingers close together could be
 				// a translation
 //				float size = event.getSize();
@@ -315,7 +411,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 						_lastSpot = null;
 						return true;
 					}
-					
+
 					// If there is no current stroke,
 					// this must be an ACTION_DOWN, so create
 					// one and add it to the list
@@ -323,15 +419,15 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 						_currentStroke = new Stroke();
 						_strokes.add(_currentStroke);
 					}
-				
+
 					// Add the point to the current stroke
 					_currentStroke.Points.add(p);
-				
+
 					// If this was an ACTION_UP, clear the current stroke
 					if (action == MotionEvent.ACTION_UP) {
 						_currentStroke = null;	
 					}
-					
+
 					_origCenter = null;
 				}
 //			}	
@@ -345,13 +441,13 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 					_strokes.remove(_currentStroke);
 					_currentStroke = null;
 				}
-			
-			
+
+
 				float x1 = event.getX(0);
 				float y1 = event.getY(0);
 				float x2 = event.getX(1);
 				float y2 = event.getY(1);
-				
+
 				PointF[] curPoints = new PointF[2];
 				if (_origTransform == null) {
 					curPoints[0] = applyInvTransform(_viewTransform, new PointF(x1, y1));
@@ -360,7 +456,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 					curPoints[0] = applyInvTransform(_origTransform, new PointF(x1, y1));
 					curPoints[1] = applyInvTransform(_origTransform, new PointF(x2, y2));
 				}
-				
+
 				// First two pointer event?
 				if (_origCenter == null) {
 					_origCenter = getCenter(curPoints[0], curPoints[1]);
@@ -369,61 +465,61 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 					_origTransform.set(_viewTransform);
 					return true;
 				}
-				
+
 				// Calculate distance and center
 				PointF center = getCenter(curPoints[0], curPoints[1]);
 				float distance = getDistance(curPoints[0], curPoints[1]);
-				
+
 				// Calculate the new scale
 				float scale = (float)distance / _origDistance;
-				
+
 				// Calculate translation
 				//PointF translation = getDifference(_origCenter, center);
-				
+
 				// Update the view transform
 				_viewTransform.set(_origTransform);
 				//_viewTransform.preTranslate(translation.x, translation.y);
 				_viewTransform.preScale(scale, scale);
-				
+
 				// Make a new inverse be calculated when needed
 				_invViewTransform = null;
 			}
-			
+
 			return true;
 		} else {
 			_origCenter = null;
 		}
-		
+
 		return false;
-		
-		*/
+
+		 */
 	}
-    
-    // Draws the given stroke on the given canvas
-    // uses the view transform to map the points to where 
-    // they should be on the canvas
-    private void drawStroke(Canvas canvas, Stroke stroke) {
+
+	// Draws the given stroke on the given canvas
+	// uses the view transform to map the points to where 
+	// they should be on the canvas
+	private void drawStroke(Canvas canvas, Stroke stroke) {
 		if (stroke.Points.size() < 2)
 			return;
-	
+
 		for (int pIndex = 0; pIndex < stroke.Points.size() - 1; pIndex++) {
 			float points[] = new float[4];
 			PointF p1 = stroke.Points.get(pIndex);
 			PointF p2 = stroke.Points.get(pIndex + 1);
-			
+
 			points[0] = p1.x;
 			points[1] = p1.y;
 			points[2] = p2.x;
 			points[3] = p2.y;
-			
+
 			_viewTransform.mapPoints(points);
-			
+
 			canvas.drawLine(points[0], points[1], points[2], points[3], stroke.Paint);
 		}
-    }
+	}
 
 	@Override
-    public void onDraw(Canvas canvas) {		
+	public void onDraw(Canvas canvas) {		
 		// Draw the data
 		synchronized(DrawingLock) {			
 			// Draw the background
@@ -439,6 +535,6 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 				drawStroke(canvas, stroke);
 		}
 
-    }
+	}
 
 }
