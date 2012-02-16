@@ -216,6 +216,64 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	
     @Override
 	public boolean onTouchEvent(MotionEvent event) {
+    	int actionCode = event.getActionMasked();
+    	int pointerCount = event.getPointerCount();
+    	
+    	switch (actionCode) {
+    	case MotionEvent.ACTION_DOWN:
+    		
+    		break;
+    	case MotionEvent.ACTION_MOVE:
+			synchronized(DrawingLock) {
+				updateInverseViewTransform();
+				
+				float[] point = {event.getX(), event.getY()};
+				
+				float x = event.getX();
+				float y = event.getY();
+				
+				// Get the point it occurred at
+				PointF p = new PointF(x, y);
+				
+				// Put it in page coordinates
+				p = getInvViewTransform(p);
+				
+				if (_lastSpot != null) {
+					_lastSpot = null;
+					return true;
+				}
+					
+					// If there is no current stroke,
+					// this must be an ACTION_DOWN, so create
+					// one and add it to the list
+					if (_currentStroke == null) {
+						_currentStroke = new Stroke();
+						_strokes.add(_currentStroke);
+					}
+				
+					// Add the point to the current stroke
+					_currentStroke.Points.add(p);
+				
+					// If this was an ACTION_UP, clear the current stroke
+					if (action == MotionEvent.ACTION_UP) {
+						_currentStroke = null;	
+					}
+					
+					_origCenter = null;
+				}
+//			}	
+
+    		break;
+    	case MotionEvent.ACTION_UP:
+    		break;
+    		
+    	case MotionEvent.ACTION_POINTER_DOWN:
+    		break;
+    	
+    	}
+    	
+    	
+    	/*
 		int count = event.getPointerCount();
 		
 		// If only one pointer is down
@@ -320,11 +378,11 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 				float scale = (float)distance / _origDistance;
 				
 				// Calculate translation
-				PointF translation = getDifference(_origCenter, center);
+				//PointF translation = getDifference(_origCenter, center);
 				
 				// Update the view transform
 				_viewTransform.set(_origTransform);
-				_viewTransform.preTranslate(translation.x, translation.y);
+				//_viewTransform.preTranslate(translation.x, translation.y);
 				_viewTransform.preScale(scale, scale);
 				
 				// Make a new inverse be calculated when needed
@@ -337,6 +395,8 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		}
 		
 		return false;
+		
+		*/
 	}
     
     // Draws the given stroke on the given canvas
