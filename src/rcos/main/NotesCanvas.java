@@ -38,6 +38,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	private Matrix _origInvTransform;
 	private Stroke _currentStroke;
 	private PointF _zoomCenter;
+	private PointF _lastSpot;
 	private int _gestureState;
 
 	// Modes
@@ -53,7 +54,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	public final int Zooming = 3;
 
 	// Constants
-	public final float TranslationPressureThreshold = 0.05f;
+	public final float TranslationPressureThreshold = 0.07f;
 	public final int DrawingPointThreshold = 5;
 
 	public Object DrawingLock = new Object();
@@ -255,21 +256,46 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
 		switch (action) {
 		case MotionEvent.ACTION_DOWN:
-			Log.d("NotesCanvas", "Action_Down, _gestureState=" + _gestureState + ", count=" + pointerCount);
 			synchronized (DrawingLock) {
 				updateInverseViewTransform();
 
+				float x = event.getX();
+				float y = event.getY();
+
+				// Get the point it occurred at
+				PointF p = new PointF(x, y);
+
+				// Put it in page coordinates
+				p = getInvViewTransform(p);
+
 				// Check for the width of the pointer
 				// to see if we should start panning
-//				float pressure = event.getPressure();
-//				if (pressure > TranslationPressureThreshold) {
-//					_gestureState = Panning;
-//					
-//				} else {
+				float pressure = event.getPressure();
+				if (pressure > TranslationPressureThreshold) {
+					_gestureState = Panning;
+					_lastSpot = p;
+				} else {
 
 					_currentStroke = new Stroke();
 					_gestureState = Drawing;
 
+					// Add the point to the current stroke
+					_currentStroke.Points.add(p);
+				}
+			}
+			break;
+		case MotionEvent.ACTION_MOVE:
+			synchronized(DrawingLock) {				
+				updateInverseViewTransform();
+
+				// If we are drawing, there's a possibility we
+				// might want to pan instead.  Check if the size of
+				// their finger has changed since the start and
+				// cancel the current stroke/start panning if it is
+				// above the threshold.
+				float pressure = event.getPressure();
+
+				if (_gestureState == Drawing && pressure > TranslationPressureThreshold) {
 					float x = event.getX();
 					float y = event.getY();
 
@@ -279,17 +305,11 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 					// Put it in page coordinates
 					p = getInvViewTransform(p);
 
-					// Add the point to the current stroke
-					_currentStroke.Points.add(p);
-//				}
-			}
-			break;
-		case MotionEvent.ACTION_MOVE:
-			Log.d("NotesCanvas", "Action_Move, _gestureState=" + _gestureState + ", count=" + pointerCount);
-			synchronized(DrawingLock) {				
-				updateInverseViewTransform();
-
-				if (_gestureState == Zooming && pointerCount == 2) {
+					// Set the new state
+					_gestureState = Panning;
+					_lastSpot = p;
+					_currentStroke = null;
+				} else if (_gestureState == Zooming && pointerCount == 2) {
 
 					PointF p1 = new PointF(event.getX(0), event.getY(0));
 					PointF p2 = new PointF(event.getX(1), event.getY(1));
@@ -339,17 +359,29 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 					_currentStroke.Points.add(p);
 
 				} else if (_gestureState == Panning) {
+					float x = event.getX();
+					float y = event.getY();
 
+					// Get the point it occurred at
+					PointF p = new PointF(x, y);
+
+					// Put it in page coordinates
+					p = getInvViewTransform(p);
+
+					PointF diff = getDifference(_lastSpot, p);
+					_lastSpot = p;
+
+					_viewTransform.preTranslate(diff.x, diff.y);
+					_invViewTransform = null;
 				}
 			}
 
 			break;
 		case MotionEvent.ACTION_UP:
-			Log.d("NotesCanvas", "Action_Up, _gestureState=" + _gestureState + ", count=" + pointerCount);
-			if (_gestureState == Drawing) {
-				synchronized (DrawingLock) {
-					updateInverseViewTransform();
-
+			synchronized (DrawingLock) {
+				updateInverseViewTransform();
+				
+				if (_gestureState == Drawing) {
 					float x = event.getX();
 					float y = event.getY();
 
@@ -363,6 +395,21 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 					_currentStroke.Points.add(p);
 
 					_strokes.add(_currentStroke);
+				} else if (_gestureState == Panning) {
+					float x = event.getX();
+					float y = event.getY();
+
+					// Get the point it occurred at
+					PointF p = new PointF(x, y);
+
+					// Put it in page coordinates
+					p = getInvViewTransform(p);
+
+					PointF diff = getDifference(_lastSpot, p);
+					_lastSpot = null;
+
+					_viewTransform.preTranslate(diff.x, diff.y);
+					_invViewTransform = null;
 				}
 			}
 
@@ -370,23 +417,17 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 			break;
 
 		case MotionEvent.ACTION_POINTER_DOWN:
-			Log.d("NotesCanvas", "Action_Pointer_Down, _gestureState=" + _gestureState + ", count=" + pointerCount);
 			synchronized(DrawingLock) {
 				updateInverseViewTransform();
-
-				// Cancel any current drawing if it is still small
-				//if ((_gestureState == Drawing && _currentStroke != null && _currentStroke.Points.size() < DrawingPointThreshold) || _gestureState != Drawing) {
 
 				// 2 Fingers down, we're zooming
 				_gestureState = Zooming;
 				_origDistance = -1;
 				_origTransform = new Matrix(_viewTransform);
 				_origInvTransform = new Matrix(_invViewTransform);
-				//}
 			}
 			break;
 		case MotionEvent.ACTION_POINTER_UP:
-			Log.d("NotesCanvas", "Action_Pointer_Up, _gestureState=" + _gestureState + ", count=" + pointerCount);
 			if (pointerCount < 2) {
 				// Done zooming
 				_gestureState = None;
