@@ -185,7 +185,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
 		return new PointF(pArray[0], pArray[1]);
 	}
-	
+
 	// Applies the given transform to the given point
 	private PointF applyTransform(Matrix transform, PointF point) {
 		float points[] = new float[2];
@@ -234,6 +234,20 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		return result;
 	}
 
+	// Changes the view transform's values to the given ones
+	//     and flags the inverse as being dirty.
+	public void updateViewTransform(float[] vals) {
+		_viewTransform.setValues(vals);
+		_invViewTransform = null;
+	}
+
+	// Copies the given transform's values into the current 
+	//     view transform and flags the inverse as dirty.
+	public void updateViewTransform(Matrix viewTransform) {
+		_viewTransform = new Matrix(viewTransform);
+		_invViewTransform = null;
+	}
+
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		int action = event.getActionMasked();
@@ -244,21 +258,30 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 			Log.d("NotesCanvas", "Action_Down, _gestureState=" + _gestureState + ", count=" + pointerCount);
 			synchronized (DrawingLock) {
 				updateInverseViewTransform();
-				
-				_currentStroke = new Stroke();
-				_gestureState = Drawing;
 
-				float x = event.getX();
-				float y = event.getY();
+				// Check for the width of the pointer
+				// to see if we should start panning
+//				float pressure = event.getPressure();
+//				if (pressure > TranslationPressureThreshold) {
+//					_gestureState = Panning;
+//					
+//				} else {
 
-				// Get the point it occurred at
-				PointF p = new PointF(x, y);
+					_currentStroke = new Stroke();
+					_gestureState = Drawing;
 
-				// Put it in page coordinates
-				p = getInvViewTransform(p);
+					float x = event.getX();
+					float y = event.getY();
 
-				// Add the point to the current stroke
-				_currentStroke.Points.add(p);
+					// Get the point it occurred at
+					PointF p = new PointF(x, y);
+
+					// Put it in page coordinates
+					p = getInvViewTransform(p);
+
+					// Add the point to the current stroke
+					_currentStroke.Points.add(p);
+//				}
 			}
 			break;
 		case MotionEvent.ACTION_MOVE:
@@ -270,7 +293,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
 					PointF p1 = new PointF(event.getX(0), event.getY(0));
 					PointF p2 = new PointF(event.getX(1), event.getY(1));
-					
+
 					// Put these in page coordinates
 					p1 = applyTransform(_origInvTransform, p1);
 					p2 = applyTransform(_origInvTransform, p2);
@@ -299,7 +322,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 					vals[Matrix.MTRANS_X] =  initTransX - initScale * (_zoomCenter.x * ratio - _zoomCenter.x);
 					vals[Matrix.MTRANS_Y] =  initTransY - initScale * (_zoomCenter.y * ratio - _zoomCenter.y);
 
-					_viewTransform.setValues(vals);
+					updateViewTransform(vals);
 
 				} else if (_gestureState == Drawing) {
 
@@ -326,7 +349,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 			if (_gestureState == Drawing) {
 				synchronized (DrawingLock) {
 					updateInverseViewTransform();
-					
+
 					float x = event.getX();
 					float y = event.getY();
 
@@ -354,11 +377,11 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 				// Cancel any current drawing if it is still small
 				//if ((_gestureState == Drawing && _currentStroke != null && _currentStroke.Points.size() < DrawingPointThreshold) || _gestureState != Drawing) {
 
-					// 2 Fingers down, we're zooming
-					_gestureState = Zooming;
-					_origDistance = -1;
-					_origTransform = new Matrix(_viewTransform);
-					_origInvTransform = new Matrix(_invViewTransform);
+				// 2 Fingers down, we're zooming
+				_gestureState = Zooming;
+				_origDistance = -1;
+				_origTransform = new Matrix(_viewTransform);
+				_origInvTransform = new Matrix(_invViewTransform);
 				//}
 			}
 			break;
@@ -538,7 +561,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 			// Just draw all the strokes we're keeping track of for now
 			for (Stroke stroke : _strokes)
 				drawStroke(canvas, stroke);
-			
+
 			if (_gestureState == Drawing)
 				drawStroke(canvas, _currentStroke);
 		}
