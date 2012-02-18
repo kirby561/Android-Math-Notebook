@@ -26,8 +26,7 @@ import android.view.SurfaceView;
 //
 public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {	
 	private DrawingThread _drawingThread;
-	private ArrayList<Stroke> _strokes;
-	private Stroke[] _background;
+	private Page _page;
 	private Matrix _viewTransform = new Matrix();
 	private Matrix _invViewTransform = new Matrix();
 	private int _mode;
@@ -69,11 +68,9 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	private void initialize() {
 		// Initialize the drawing thread and the strokes array
 		_drawingThread = new DrawingThread(getHolder(), this);
-		_strokes = new ArrayList<Stroke>();
+		_page = new Page();
 		_currentStroke = null;
 		_gestureState = None;
-
-		_background = getDefaultBackground();
 
 		// Register for surface callbacks
 		getHolder().addCallback(this);
@@ -88,42 +85,6 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	public NotesCanvas(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		initialize();
-	}
-
-	// Returns a list of strokes that creates a standard
-	// 8.5x11 inch notebook page
-	private Stroke[] getDefaultBackground() {
-		// Just draw normal 8.5x11" page at 72 DPI
-		Stroke[] result = new Stroke[40];
-
-		// Red line
-		Paint red = new Paint();
-		red.setStrokeWidth(4);
-		red.setColor(Color.RED);
-		Stroke redLine = new Stroke();
-		redLine.Points.add(new PointF(75,0));
-		redLine.Points.add(new PointF(75,11.5f*72));
-		redLine.Paint = red;
-		result[0] = redLine;
-
-		// Blue lines
-		int offset = 88;
-		int spacing = 18;
-		Paint blue = new Paint();
-		blue.setStrokeWidth(1);
-		blue.setARGB(255, 122, 195, 240);
-		for (int i = 0; i < 39; i++) {
-			int y = offset + i * spacing;
-			PointF p1 = new PointF(0, y);
-			PointF p2 = new PointF(792, y);
-			Stroke blueStroke = new Stroke();
-			blueStroke.Points.add(p1);
-			blueStroke.Points.add(p2);
-			blueStroke.Paint = blue;
-			result[i+1] = blueStroke;
-		}
-
-		return result;
 	}
 
 	public NotesCanvas(Context context, AttributeSet attrs, int defStyle) {
@@ -247,6 +208,13 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		_viewTransform = new Matrix(viewTransform);
 		_invViewTransform = null;
 	}
+	
+	// Gets the X scale of the given transform
+	public float getScale(Matrix transform) {
+		float[] vals = new float[9];
+		transform.getValues(vals);
+		return vals[Matrix.MSCALE_X];
+	}
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
@@ -264,17 +232,17 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 				// Get the point it occurred at
 				PointF p = new PointF(x, y);
 
-				// Put it in page coordinates
-				p = getInvViewTransform(p);
-
 				// Check for the width of the pointer
 				// to see if we should start panning
 				float pressure = event.getPressure();
 				if (pressure > TranslationPressureThreshold) {
 					_gestureState = Panning;
 					_lastSpot = p;
+					_origTransform = new Matrix(_viewTransform);
 				} else {
-
+					// Put it in page coordinates
+					p = getInvViewTransform(p);
+					
 					_currentStroke = new Stroke();
 					_gestureState = Drawing;
 
@@ -302,7 +270,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 					PointF p = new PointF(x, y);
 
 					// Put it in page coordinates
-					p = getInvViewTransform(p);
+					//p = getInvViewTransform(p);
 
 					// Set the new state
 					_gestureState = Panning;
@@ -364,11 +332,13 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 					// Get the point it occurred at
 					PointF p = new PointF(x, y);
 
-					// Put it in page coordinates
-					p = getInvViewTransform(p);
-
 					PointF diff = getDifference(_lastSpot, p);
 					_lastSpot = p;
+					
+					// We only care about the scaling for transformations, so get this info
+					float scale = getScale(_viewTransform);
+					diff.x /= scale;
+					diff.y /= scale;
 
 					_viewTransform.preTranslate(diff.x, diff.y);
 					_invViewTransform = null;
@@ -393,7 +363,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 					// Add the point to the current stroke
 					_currentStroke.Points.add(p);
 
-					_strokes.add(_currentStroke);
+					_page.addStroke(_currentStroke);
 				} else if (_gestureState == Panning) {
 					float x = event.getX();
 					float y = event.getY();
@@ -401,11 +371,13 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 					// Get the point it occurred at
 					PointF p = new PointF(x, y);
 
-					// Put it in page coordinates
-					p = getInvViewTransform(p);
-
 					PointF diff = getDifference(_lastSpot, p);
 					_lastSpot = null;
+					
+					// We only care about the scaling for transformations, so get this info
+					float scale = getScale(_viewTransform);
+					diff.x /= scale;
+					diff.y /= scale;
 
 					_viewTransform.preTranslate(diff.x, diff.y);
 					_invViewTransform = null;
@@ -435,132 +407,6 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		}
 
 		return true;
-
-
-		/*
-		int count = event.getPointerCount();
-
-		// If only one pointer is down
-		if (count == 1) {
-			// Get the action (up/down/move etc..)
-			int action = event.getActionMasked();
-
-			synchronized(DrawingLock) {
-				updateInverseViewTransform();
-
-				float[] point = {event.getX(), event.getY()};
-
-				float x = event.getX();
-				float y = event.getY();
-
-				// Get the point it occurred at
-				PointF p = new PointF(x, y);
-
-				// Put it in page coordinates
-				p = getInvViewTransform(p);
-
-				// Two fingers close together could be
-				// a translation
-//				float size = event.getSize();
-//				if (size > TranslationPressureThreshold && _currentStroke == null) {
-//					if (_lastSpot == null)
-//						_lastSpot = new PointF(x, y);
-//					PointF spot = new PointF(x, y);
-//					PointF diff = getDifference(_lastSpot, spot);
-//					
-//					_viewTransform.preTranslate(diff.x, diff.y);
-//					
-//					if (action == MotionEvent.ACTION_UP)
-//						_lastSpot = null;	
-//					else
-//						_lastSpot = spot;
-//				} else {
-					if (_lastSpot != null) {
-						_lastSpot = null;
-						return true;
-					}
-
-					// If there is no current stroke,
-					// this must be an ACTION_DOWN, so create
-					// one and add it to the list
-					if (_currentStroke == null) {
-						_currentStroke = new Stroke();
-						_strokes.add(_currentStroke);
-					}
-
-					// Add the point to the current stroke
-					_currentStroke.Points.add(p);
-
-					// If this was an ACTION_UP, clear the current stroke
-					if (action == MotionEvent.ACTION_UP) {
-						_currentStroke = null;	
-					}
-
-					_origCenter = null;
-				}
-//			}	
-
-			return true;
-		} else if (count == 2) {
-			// Manipulate the view
-			synchronized(DrawingLock) {
-				// Destroy any current lines being drawn -- we're moving the view now
-				if (_currentStroke != null) {
-					_strokes.remove(_currentStroke);
-					_currentStroke = null;
-				}
-
-
-				float x1 = event.getX(0);
-				float y1 = event.getY(0);
-				float x2 = event.getX(1);
-				float y2 = event.getY(1);
-
-				PointF[] curPoints = new PointF[2];
-				if (_origTransform == null) {
-					curPoints[0] = applyInvTransform(_viewTransform, new PointF(x1, y1));
-					curPoints[1] = applyInvTransform(_viewTransform, new PointF(x2, y2));
-				} else {
-					curPoints[0] = applyInvTransform(_origTransform, new PointF(x1, y1));
-					curPoints[1] = applyInvTransform(_origTransform, new PointF(x2, y2));
-				}
-
-				// First two pointer event?
-				if (_origCenter == null) {
-					_origCenter = getCenter(curPoints[0], curPoints[1]);
-					_origDistance = getDistance(curPoints[0], curPoints[1]);
-					_origTransform = new Matrix();
-					_origTransform.set(_viewTransform);
-					return true;
-				}
-
-				// Calculate distance and center
-				PointF center = getCenter(curPoints[0], curPoints[1]);
-				float distance = getDistance(curPoints[0], curPoints[1]);
-
-				// Calculate the new scale
-				float scale = (float)distance / _origDistance;
-
-				// Calculate translation
-				//PointF translation = getDifference(_origCenter, center);
-
-				// Update the view transform
-				_viewTransform.set(_origTransform);
-				//_viewTransform.preTranslate(translation.x, translation.y);
-				_viewTransform.preScale(scale, scale);
-
-				// Make a new inverse be calculated when needed
-				_invViewTransform = null;
-			}
-
-			return true;
-		} else {
-			_origCenter = null;
-		}
-
-		return false;
-
-		 */
 	}
 
 	// Draws the given stroke on the given canvas
@@ -595,17 +441,16 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 			whiteFill.setStyle(Style.FILL_AND_STROKE);
 			whiteFill.setColor(Color.WHITE);
 			canvas.drawRect(new Rect(0,0,canvas.getWidth(), canvas.getHeight()), whiteFill);
-			for (Stroke stroke : _background)
+			for (Stroke stroke : _page.getBackground())
 				drawStroke(canvas, stroke);
 
 			// Just draw all the strokes we're keeping track of for now
-			for (Stroke stroke : _strokes)
+			for (Stroke stroke : _page.getStrokes())
 				drawStroke(canvas, stroke);
 
 			if (_gestureState == Drawing)
 				drawStroke(canvas, _currentStroke);
 		}
-
 	}
 
 }
