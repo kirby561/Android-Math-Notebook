@@ -54,8 +54,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	public final int Zooming = 3;
 
 	// Constants
-	public final float TranslationPressureThreshold = 0.07f;
-	public final int DrawingPointThreshold = 5;
+	public float TranslationPressureThreshold = 0.07f;
 
 	public Object DrawingLock = new Object();
 
