@@ -1,1 +1,56 @@
-This is the Android Math Notebook.
+ _______________________________________________
+|       ___            _           _     _      |
+|      / _ \          | |         (_)   | |     |
+|     / /_\ \_ __   __| |_ __ ___  _  __| |     |
+|     |  _  | '_ \ / _` | '__/ _ \| |/ _` |     | 
+|     | | | | | | | (_| | | | (_) | | (_| |     | 
+|     \_| |_/_| |_|\__,_|_|  \___/|_|\__,_|     | 
+|                                               | 
+|                                               |
+|                                               |
+|          ___  ___      _   _                  |
+|          |  \/  |     | | | |                 |
+|          | .  . | __ _| |_| |__               | 
+|          | |\/| |/ _` | __| '_ \              |
+|          | |  | | (_| | |_| | | |             |
+|          \_|  |_/\__,_|\__|_| |_|             |
+|                                               |
+|                                               |
+|                                               |  
+|  _   _       _        _                 _     |
+| | \ | |     | |      | |               | |    |
+| |  \| | ___ | |_  ___| |__   ___   ___ | | __ |
+| | . ` |/ _ \| __|/ _ \ '_ \ / _ \ / _ \| |/ / |
+| | |\  | (_) | |_|  __/ |_) | (_) | (_) |   <  |
+| \_| \_/\___/ \__|\___|_.__/ \___/ \___/|_|\_\ |
+|_______________________________________________|
+
+The following instructions describe how to compile and run Android Math Notebook.
+
+-------------------------
+     What you Need
+-------------------------
+1. Eclipse (www.eclipse.org)
+   Any version should work, but Eclipse Classic is recommended.
+2. GIT
+3. Android SDK (with 2.2 support)
+4. Android NDK
+
+-------------------------
+Compilation Instructions
+-------------------------
+1. Clone the public repository into <path> (Example: /home/greg/code/AndroidMathNotebook or C:/code/AndroidMathNotebook)
+   as shown below:
+	
+	cd <path>	
+	git clone git://github.com/kirby561/Android-Math-Notebook.git
+
+2. Open Eclipse
+3. Click File->Import
+4. Select Existing Projects into Workspace
+5. Click Next
+6. Enter <path> in the Select Root Directory field
+7. Click Finish
+8. Click the build and run button, and it will either launch an emulator or run on your phone if it is plugged in.
+
+
