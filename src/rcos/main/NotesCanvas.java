@@ -2,6 +2,8 @@ package rcos.main;
 
 import java.util.ArrayList;
 
+import rcos.main.recognition.PointMath;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -10,6 +12,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.hardware.Camera.Size;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -412,15 +415,19 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	// Draws the given stroke on the given canvas
 	// uses the view transform to map the points to where 
 	// they should be on the canvas
-	private void drawStroke(Canvas canvas, Stroke stroke) {
+	// Don't draw lines that don't intersect the bounding box
+	private void drawStroke(Canvas canvas, Stroke stroke, RectF boundingBox) {
 		if (stroke.Points.size() < 2)
 			return;
 
 		for (int pIndex = 0; pIndex < stroke.Points.size() - 1; pIndex++) {
-			float points[] = new float[4];
 			PointF p1 = stroke.Points.get(pIndex);
 			PointF p2 = stroke.Points.get(pIndex + 1);
+			
+			// Make sure this line is actually in the view before drawing it
+			if (!PointMath.lineSegmentIntersectsRect(p1,  p2, boundingBox)) continue;
 
+			float points[] = new float[4];
 			points[0] = p1.x;
 			points[1] = p1.y;
 			points[2] = p2.x;
@@ -435,21 +442,30 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	@Override
 	public void onDraw(Canvas canvas) {		
 		// Draw the data
-		synchronized(DrawingLock) {			
+		synchronized(DrawingLock) {
+			updateInverseViewTransform();
+			
+			// Compute the bounding box of the view in page coordinates
+			PointF topLeft = new PointF(0,0);
+			PointF bottomRight = new PointF(canvas.getWidth(), canvas.getHeight());
+			topLeft = getInvViewTransform(topLeft);
+			bottomRight = getInvViewTransform(bottomRight);
+			RectF boundingBox = new RectF(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
+			
 			// Draw the background
 			Paint whiteFill = new Paint();
 			whiteFill.setStyle(Style.FILL_AND_STROKE);
 			whiteFill.setColor(Color.WHITE);
 			canvas.drawRect(new Rect(0,0,canvas.getWidth(), canvas.getHeight()), whiteFill);
 			for (Stroke stroke : _page.getBackground())
-				drawStroke(canvas, stroke);
+				drawStroke(canvas, stroke, boundingBox);
 
 			// Just draw all the strokes we're keeping track of for now
 			for (Stroke stroke : _page.getStrokes())
-				drawStroke(canvas, stroke);
+				drawStroke(canvas, stroke, boundingBox);
 
 			if (_gestureState == Drawing)
-				drawStroke(canvas, _currentStroke);
+				drawStroke(canvas, _currentStroke, boundingBox);
 		}
 	}
 

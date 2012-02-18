@@ -3,6 +3,7 @@ package rcos.main;
 import java.util.ArrayList;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.RectF;
 
 //
 // Stroke
