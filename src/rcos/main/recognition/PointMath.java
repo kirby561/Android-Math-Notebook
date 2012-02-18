@@ -29,6 +29,6 @@ public class PointMath {
     	
     	// If the bounding box of the line segment intersects the rectangle or one contains the other,
     	//    the line segment intersects the rectangle.
-    	return line.intersect(r2) || line.contains(r2) || r2.contains(line);
+    	return RectF.intersects(line, r2) || line.contains(r2) || r2.contains(line);
     }
 }

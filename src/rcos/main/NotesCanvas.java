@@ -250,7 +250,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 					_gestureState = Drawing;
 
 					// Add the point to the current stroke
-					_currentStroke.Points.add(p);
+					_currentStroke.addPoint(p);
 				}
 			}
 			break;
@@ -326,7 +326,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 					p = getInvViewTransform(p);
 
 					// Add the point to the current stroke
-					_currentStroke.Points.add(p);
+					_currentStroke.addPoint(p);
 
 				} else if (_gestureState == Panning) {
 					float x = event.getX();
@@ -364,7 +364,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 					p = getInvViewTransform(p);
 
 					// Add the point to the current stroke
-					_currentStroke.Points.add(p);
+					_currentStroke.addPoint(p);
 
 					_page.addStroke(_currentStroke);
 				} else if (_gestureState == Panning) {
@@ -417,12 +417,19 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	// they should be on the canvas
 	// Don't draw lines that don't intersect the bounding box
 	private void drawStroke(Canvas canvas, Stroke stroke, RectF boundingBox) {
-		if (stroke.Points.size() < 2)
+		if (stroke.getNumberOfPoints() < 2)
+			return;
+		
+		RectF sbb = stroke.getBoundingBox();
+		
+		// Make sure the stroke even intersects/is inside the bounding box before
+		// drawing it
+		if (!(RectF.intersects(sbb, boundingBox) || sbb.contains(boundingBox) || boundingBox.contains(sbb)))
 			return;
 
-		for (int pIndex = 0; pIndex < stroke.Points.size() - 1; pIndex++) {
-			PointF p1 = stroke.Points.get(pIndex);
-			PointF p2 = stroke.Points.get(pIndex + 1);
+		for (int pIndex = 0; pIndex < stroke.getNumberOfPoints() - 1; pIndex++) {
+			PointF p1 = stroke.getPointAt(pIndex);
+			PointF p2 = stroke.getPointAt(pIndex + 1);
 			
 			// Make sure this line is actually in the view before drawing it
 			if (!PointMath.lineSegmentIntersectsRect(p1,  p2, boundingBox)) continue;
@@ -435,7 +442,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
 			_viewTransform.mapPoints(points);
 
-			canvas.drawLine(points[0], points[1], points[2], points[3], stroke.Paint);
+			canvas.drawLine(points[0], points[1], points[2], points[3], stroke.getPaint());
 		}
 	}
 

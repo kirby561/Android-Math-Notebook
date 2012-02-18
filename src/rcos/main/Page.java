@@ -29,9 +29,9 @@ public class Page {
 		red.setStrokeWidth(4);
 		red.setColor(Color.RED);
 		Stroke redLine = new Stroke();
-		redLine.Points.add(new PointF(75,0));
-		redLine.Points.add(new PointF(75,11.5f*72));
-		redLine.Paint = red;
+		redLine.addPoint(new PointF(75,0));
+		redLine.addPoint(new PointF(75,11.5f*72));
+		redLine.setPaint(red);
 		result[0] = redLine;
 
 		// Blue lines
@@ -45,9 +45,9 @@ public class Page {
 			PointF p1 = new PointF(0, y);
 			PointF p2 = new PointF(792, y);
 			Stroke blueStroke = new Stroke();
-			blueStroke.Points.add(p1);
-			blueStroke.Points.add(p2);
-			blueStroke.Paint = blue;
+			blueStroke.addPoint(p1);
+			blueStroke.addPoint(p2);
+			blueStroke.setPaint(blue);
 			result[i+1] = blueStroke;
 		}
 
