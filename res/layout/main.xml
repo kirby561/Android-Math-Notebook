@@ -4,8 +4,78 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
     
+   <RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
     <rcos.main.NotesCanvas android:id="@+id/Canvas" android:layout_width="fill_parent"
  		android:layout_height="fill_parent">
 	</rcos.main.NotesCanvas>
+        
+   <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true" >
+
+        <ImageButton
+            android:id="@+id/btnFreehand"
+            android:layout_width="55dip"
+            android:layout_height="55dip"
+            android:cropToPadding="false"
+            android:paddingLeft="10dip"
+            android:scaleType="fitXY"
+            android:src="@drawable/freehand_active" />
+        
+       <ImageButton
+            android:id="@+id/btnRecognition"
+            android:layout_width="55dip"
+            android:layout_height="55dip"
+            android:cropToPadding="false"
+            android:paddingLeft="10dip"
+            android:scaleType="fitXY"
+            android:src="@drawable/recognition" />
+       
+       <ImageButton
+            android:id="@+id/btnMath"
+            android:layout_width="55dip"
+            android:layout_height="55dip"
+            android:cropToPadding="false"
+            android:paddingLeft="10dip"
+            android:scaleType="fitXY"
+            android:src="@drawable/math" />
+
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true" >
+
+        <ImageButton
+            android:id="@+id/btnUndo"
+            android:layout_width="55dip"
+            android:layout_height="55dip"
+            android:cropToPadding="false"
+            android:paddingLeft="10dip"
+            android:scaleType="fitXY"
+            android:src="@drawable/undo" />
+        
+       <ImageButton
+            android:id="@+id/btnRedo"
+            android:layout_width="55dip"
+            android:layout_height="55dip"
+            android:cropToPadding="false"
+            android:paddingLeft="10dip"
+            android:scaleType="fitXY"
+            android:src="@drawable/redo" />
+
+    </LinearLayout>
+    
+    </RelativeLayout>
 
 </LinearLayout>

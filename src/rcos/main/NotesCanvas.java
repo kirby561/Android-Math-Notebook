@@ -44,10 +44,10 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	private int _gestureState;
 
 	// Modes
-	public final int FreehandMode = 0;
-	public final int RecognitionMode = 1;
-	public final int MathMode = 2;
-	public final int EraseMode = 3;
+	public static final int FreehandMode = 0;
+	public static final int RecognitionMode = 1;
+	public static final int MathMode = 2;
+	public static final int EraseMode = 3;
 
 	// Gesture States
 	public final int None = 0;
@@ -74,6 +74,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		_page = new Page();
 		_currentStroke = null;
 		_gestureState = None;
+		_mode = NotesCanvas.FreehandMode;
 
 		// Register for surface callbacks
 		getHolder().addCallback(this);

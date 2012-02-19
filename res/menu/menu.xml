@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/mnuSave"
+          android:icon="@drawable/save"
+          android:title="@string/save" />
+    <item android:id="@+id/mnuLoad"
+          android:icon="@drawable/load"
+          android:title="@string/load" />
+    <item android:id="@+id/mnuSettings"
+          android:icon="@drawable/settings"
+          android:title="@string/settings" />
+    <item android:id="@+id/mnuExit"
+          android:icon="@drawable/exit"
+          android:title="@string/exit" />
+</menu>
