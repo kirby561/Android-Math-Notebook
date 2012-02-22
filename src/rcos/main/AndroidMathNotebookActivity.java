@@ -1,11 +1,14 @@
 package rcos.main;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 //
 //  AndroidMathNotebookActivity
@@ -59,17 +62,51 @@ public class AndroidMathNotebookActivity extends Activity {
     };
     
     private View.OnClickListener onBtnMathClicked = new View.OnClickListener() {
-        public void onClick(View v) {
+		@Override
+		public void onClick(View v) {
         	resetModeButtonStates();
         	_btnMath.setImageResource(R.drawable.math_active);
         	_canvas.setMode(NotesCanvas.MathMode);
-        }
+		}
     };
+    
+    private void onMnuExitClicked() {
+        	// ?? Should save current document here first
+        	
+        	finish();
+    }
+    
+    private void onMnuSettingsClicked() {
+        	// Start the settings activity
+            Intent myIntent = new Intent(getApplicationContext(), SettingsActivity.class);
+            startActivityForResult(myIntent, 0);
+    }
+
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
+    
+        return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.mnuSettings:    
+            	onMnuSettingsClicked();
+            	break;
+            case R.id.mnuExit:     
+            	onMnuExitClicked();
+                break;
+            case R.id.mnuSave: 
+            	Toast.makeText(this, "Not yet implemented!", Toast.LENGTH_LONG).show();   
+            	break;            
+            case R.id.mnuLoad: 
+                Toast.makeText(this, "Not yet implemented!", Toast.LENGTH_LONG).show();   
+                break;
+        }
         return true;
     }
     

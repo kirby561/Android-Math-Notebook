@@ -5,4 +5,9 @@
     <string name="load">Load</string>
     <string name="exit">Exit</string>
     <string name="settings">Settings</string>
+    <string name="control_style">Control Style:</string>
+    <string name="control_style_prompt">Select a Style</string>
+    <string-array name="control_style_options">
+        <item>ThresholdPanning</item>
+    </string-array>
 </resources>
