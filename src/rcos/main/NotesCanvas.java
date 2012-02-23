@@ -70,7 +70,6 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
 	private void initialize() {
 		// Initialize the drawing thread and the strokes array
-		_drawingThread = new DrawingThread(getHolder(), this);
 		_page = new Page();
 		_currentStroke = null;
 		_gestureState = None;
@@ -100,14 +99,13 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
 	}
 
-	public void surfaceCreated(SurfaceHolder holder) {
-		// Start the drawing thread
+	public void start() {
+		_drawingThread = new DrawingThread(getHolder(), this);
 		_drawingThread.setRunning(true);
 		_drawingThread.start();
 	}
-
-	public void surfaceDestroyed(SurfaceHolder holder) {
-		// Clean up the drawing thread
+	
+	public void stop() {
 		boolean retry = true;
 		_drawingThread.setRunning(false);
 		while (retry) {
@@ -118,6 +116,14 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 				// Keep trying
 			}
 		}
+	}
+	
+	public void surfaceCreated(SurfaceHolder holder) {
+		start();
+	}
+
+	public void surfaceDestroyed(SurfaceHolder holder) {
+		stop();
 	}
 
 	// Updates the inverse if applicable

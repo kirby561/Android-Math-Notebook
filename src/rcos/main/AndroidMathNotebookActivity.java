@@ -62,7 +62,6 @@ public class AndroidMathNotebookActivity extends Activity {
     };
     
     private View.OnClickListener onBtnMathClicked = new View.OnClickListener() {
-		@Override
 		public void onClick(View v) {
         	resetModeButtonStates();
         	_btnMath.setImageResource(R.drawable.math_active);
@@ -82,8 +81,49 @@ public class AndroidMathNotebookActivity extends Activity {
             startActivityForResult(myIntent, 0);
     }
 
-    
     @Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+	}
+
+	@Override
+	protected void onPause() {
+		_canvas.stop();
+		
+		super.onPause();
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onRestoreInstanceState(savedInstanceState);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	protected void onStart() {
+		
+		super.onStart();
+	}
+
+	@Override
+	protected void onStop() {
+		
+		super.onStop();
+	}
+
+	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
