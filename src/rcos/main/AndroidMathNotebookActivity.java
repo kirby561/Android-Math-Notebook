@@ -96,7 +96,8 @@ public class AndroidMathNotebookActivity extends Activity {
 
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+		_canvas.restoreState(savedInstanceState);	
+		
 		super.onRestoreInstanceState(savedInstanceState);
 	}
 
@@ -107,7 +108,8 @@ public class AndroidMathNotebookActivity extends Activity {
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		// TODO Auto-generated method stub
+		_canvas.saveState(outState);
+		
 		super.onSaveInstanceState(outState);
 	}
 

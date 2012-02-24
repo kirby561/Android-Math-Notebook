@@ -1,10 +1,10 @@
 package rcos.main;
 
 import java.util.ArrayList;
-
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.os.Bundle;
 
 // A page contains what strokes to draw,
 //    and all the information about that
@@ -16,6 +16,21 @@ public class Page {
 	public Page() {
 		_strokes = new ArrayList<Stroke>();
 		_background = getDefaultBackground();
+	}
+	
+	public Page(Bundle page) {		
+		_strokes = new ArrayList<Stroke>();
+		
+		// Restore the strokes
+		int count = page.getInt("StrokeCount");
+		for (int i = 0; i < count; i++) 
+			_strokes.add(new Stroke(page.getBundle("Stroke" + i)));
+		
+		// Bundle the background
+		int backgroundCount = page.getInt("BackgroundCount");
+		_background = new Stroke[backgroundCount];
+		for (int i = 0; i < _background.length; i++)
+			_background[i] = new Stroke(page.getBundle("BackgroundStroke" + i));
 	}
 	
 	// Returns a list of strokes that creates a standard
@@ -51,6 +66,22 @@ public class Page {
 			result[i+1] = blueStroke;
 		}
 
+		return result;
+	}
+	
+	public Bundle bundle() {
+		Bundle result = new Bundle();
+		
+		// Bundle the strokes
+		result.putInt("StrokeCount", _strokes.size());
+		for (int i = 0; i < _strokes.size(); i++) 
+			result.putBundle("Stroke" + i, _strokes.get(i).bundle());
+		
+		// Bundle the background
+		result.putInt("BackgroundCount", _background.length);
+		for (int i = 0; i < _background.length; i++)
+			result.putBundle("BackgroundStroke" + i, _background[i].bundle());
+		
 		return result;
 	}
 	

@@ -1,9 +1,12 @@
 package rcos.main;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.os.Bundle;
+import android.os.Parcelable;
 
 //
 // Stroke
@@ -18,6 +21,23 @@ public class Stroke {
 		
 		// Just use a random color for now
 		_paint.setARGB(255, getRandColor(), getRandColor(), getRandColor());
+	}
+	
+	/// Debundles the given stroke
+	public Stroke(Bundle stroke) {
+		this();
+		
+		// Restore the points from the bundle
+		int pointCount = stroke.getInt("PointCount");
+		for (int i = 0; i < pointCount; i++) {
+			float x = stroke.getFloat("PointX" + i);
+			float y = stroke.getFloat("PointY" + i);
+			addPoint(new PointF(x,y));
+		}
+		
+		// Restore the Paint from the bundle
+		_paint.setColor(stroke.getInt("PaintColor"));
+		_paint.setStrokeWidth(stroke.getFloat("PaintStrokeWidth"));
 	}
 	
 	private int getRandColor() {
@@ -65,6 +85,24 @@ public class Stroke {
 	
 	public void setPaint(Paint p) {
 		_paint = p;
+	}
+	
+	/// Bundles this stroke
+	public Bundle bundle() {
+		Bundle result = new Bundle();
+		
+		// Write the points into the bundle
+		result.putInt("PointCount", getNumberOfPoints());
+		for (int i = 0; i < getNumberOfPoints(); i++) {
+			result.putFloat("PointX" + i, _points.get(i).x);
+			result.putFloat("PointY" + i, _points.get(i).y);
+		}
+		
+		// Write the Paint into the bundle
+		result.putInt("PaintColor", _paint.getColor());
+		result.putFloat("PaintStrokeWidth", _paint.getStrokeWidth());
+		
+		return result;
 	}
 	
 	// The list of points in this stroke

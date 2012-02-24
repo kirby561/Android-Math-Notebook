@@ -14,6 +14,7 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera.Size;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
@@ -72,6 +73,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		// Initialize the drawing thread and the strokes array
 		_page = new Page();
 		_currentStroke = null;
+		_origInvTransform = null;
 		_gestureState = None;
 		_mode = NotesCanvas.FreehandMode;
 
@@ -107,6 +109,10 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	
 	public void stop() {
 		boolean retry = true;
+		
+		if (_drawingThread == null)
+			return; // Nothing to do, start hasn't been called
+		
 		_drawingThread.setRunning(false);
 		while (retry) {
 			try {
@@ -481,6 +487,27 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 			if (_gestureState == Drawing)
 				drawStroke(canvas, _currentStroke, boundingBox);
 		}
+	}
+
+	/// Restores the state of this NotesCanvas from [savedInstanceState]
+	public void restoreState(Bundle savedInstanceState) {
+		// Reload the page
+		_page = new Page(savedInstanceState.getBundle("NotesCanvas_page"));
+		
+		// Load the current transform
+		float[] viewTransform = savedInstanceState.getFloatArray("NotesCanvas_viewTransform");
+        _viewTransform.setValues(viewTransform);
+	}
+
+	/// Saves the state of this NotesCanvas into [outState]
+	public void saveState(Bundle outState) {
+		// Save the page
+		outState.putBundle("NotesCanvas_page", _page.bundle());
+	    
+		// Save the current transform
+		float[] viewTransform = new float[9];
+		_viewTransform.getValues(viewTransform);
+		outState.putFloatArray("NotesCanvas_viewTransform", viewTransform);
 	}
 
 }
