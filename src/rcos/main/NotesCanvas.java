@@ -250,7 +250,9 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
 				// Check for the width of the pointer
 				// to see if we should start panning
-				float pressure = event.getPressure();
+				//float pressure = event.getPressure();
+				float pressure = event.getSize();
+				Log.d("SIZE", "Size = " + pressure);
 				if (pressure > TranslationPressureThreshold) {
 					_gestureState = Panning;
 					_lastSpot = p;
