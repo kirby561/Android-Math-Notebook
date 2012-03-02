@@ -1,0 +1,41 @@
+include $(LIPI_ROOT)/global.mk
+ORIGINALSRC= \
+    BoxFieldRecognizer.cpp\
+    boxfld.cpp
+
+SRC=$(addprefix $(LIPITK_WORDREC_BOXFLD)/, $(ORIGINALSRC))
+
+H=$(SRC:.cpp=.h)
+
+OBJ=$(SRC:.cpp=.o)
+
+TARGET=libboxfld.so
+
+INC=-I$(LIPITK_COMMON) \
+    -I$(LIPITK_SRC_INCLUDE) \
+    -I$(LIPITK_SHAPEREC_COMMON) \
+    -I$(LIPITK_SRC_UTILS_LIB) \
+    -I$(LIPITK_RECO_UTIL) \
+    -I$(LIPITK_WORDREC_COMMON)
+
+
+LIBDIR=$(LIPITK_STATIC_LIBDIR)
+
+TARGETLIB=$(LIPITK_DYNAMIC_LIBDIR)
+
+LIB= -lutil \
+     -lcommon \
+     -lshaperecommon \
+     -lwordreccommon
+
+all: ${OBJ} ${SRC}
+	$(CC_x64) $(CPPFLAGS) $(SHFLAGS)-L${LIBDIR} $(LINKLIB) -o ${TARGET} ${OBJ}  -L$(LIBDIR) $(LIB) 
+	$(CP) ${TARGET} ${TARGETLIB}
+clean:
+	-@$(REMOVE) $(LIPITK_WORDREC_BOXFLD)/*.o
+	-@$(REMOVE) ${TARGET}
+	-@$(REMOVE) $(TARGETLIB)/${TARGET}
+.cpp.o:${SRC} 
+	$(CC_x64) ${FPIC} ${INC} $(CFLAGS) $< -o $@
+
+

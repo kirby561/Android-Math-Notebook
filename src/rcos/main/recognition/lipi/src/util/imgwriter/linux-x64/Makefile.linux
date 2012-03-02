@@ -1,0 +1,32 @@
+include $(LIPI_ROOT)/global.mk
+ORIGINALSRC= main.cpp	\
+
+SRC=$(addprefix $(LIPITK_SRC_UTILS_IMGWRITER)/, $(ORIGINALSRC))
+H=$(SRC:.cpp=.h)
+OBJ=$(SRC:.cpp=.o)
+
+TARGET=imgwriter
+
+INC=-I$(LIPITK_SRC_UTILS_IMGWRITER) \
+    -I$(LIPITK_SRC_UTILS_LIB) \
+    -I$(LIPITK_SRC_INCLUDE) \
+ 
+LIB= -lutil \
+     -lcommon \
+     -lshaperecommon \
+
+LIBDIR= $(LIPITK_STATIC_LIBDIR)
+
+TARGETLIB= $(LIPITK_BIN)
+
+all: ${OBJ} ${SRC}
+	$(CC_x64) $(CPPFLAGS) -L${LIBDIR} -o ${TARGET} ${OBJ}  -L$(LIBDIR) $(LIB) $(LINKLIB)
+	$(CP) ${TARGET} ${TARGETLIB}
+
+clean:
+	-@$(REMOVE) $(LIPITK_SRC_UTILS_IMGWRITER)/*.o
+	-@$(REMOVE) ${TARGET}
+	-@$(REMOVE) $(TARGETLIB)/${TARGET}
+.cpp.o:${SRC} 
+	$(CC_x64) ${FPIC} ${INC} $(CFLAGS) $< -o $@
+

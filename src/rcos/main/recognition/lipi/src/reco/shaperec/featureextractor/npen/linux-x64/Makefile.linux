@@ -1,0 +1,44 @@
+include $(LIPI_ROOT)/global.mk
+
+ORIGINALSRC=  NPen.cpp\
+    NPenShapeFeature.cpp \
+    NPenShapeFeatureExtractor.cpp 
+
+SRC=$(addprefix $(LIPITK_SHAPEREC_FE_NPEN)/, $(ORIGINALSRC))
+
+H=$(SRC:.cpp=.h)
+
+OBJ=$(SRC:.cpp=.o)
+
+TARGET=libnpen.so
+
+INC=-I$(LIPITK_COMMON) \
+    -I$(LIPITK_SRC_INCLUDE) \
+    -I$(LIPITK_SRC_UTILS_LIB) \
+    -I$(LIPITK_SHAPEREC_FE_COMMON)
+    
+LIB= -lcommon\
+	-lutil \
+	-lfeatureextractorcommon
+
+LIBDIR= $(LIPITK_STATIC_LIBDIR)
+
+SLIBDIR = $(LIPITK_DYNAMIC_LIBDIR)
+
+TARGETLIB= $(LIPITK_DYNAMIC_LIBDIR)
+
+
+all: ${OBJ} ${SRC}
+	$(CC_x64) $(CPPFLAGS) $(SHFLAGS) -L${LIBDIR} $(LINKLIB) -o ${TARGET} ${OBJ}  -L$(LIBDIR) $(LIB) -L$(SLIBDIR) 
+	$(CP) ${TARGET} ${TARGETLIB}
+
+clean:
+	-@$(REMOVE) $(LIPITK_SHAPEREC_FE_NPEN)/*.o
+	-@$(REMOVE) ${TARGET}
+	-@$(REMOVE) $(TARGETLIB)/${TARGET}
+
+.cpp.o:${SRC} 
+	$(CC_x64) ${FPIC} ${INC} $(CFLAGS) $< -o $@
+
+
+

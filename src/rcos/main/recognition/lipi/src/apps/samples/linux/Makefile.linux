@@ -1,0 +1,65 @@
+include $(LIPI_ROOT)/global.mk
+SUBDIRS= shaperectst wordrectst
+
+.PHONY : all shaperectst wordrectst clean
+all:	
+	$(ECHO) Making ...
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	$(ECHO) "Making  $($subdir) directory... "; \
+	($(CHDIR) $(LIPITK_SAMPLES)/$$subdir/$(LINUX_LOCATION) && $(MAKE) -f Makefile.$(OS) all) \
+	done;
+
+samples:
+	($(CHDIR) $(LIPITK_SAMPLES)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+shaperectst: common util shapereccommon 
+	($(CHDIR) $(LIPITK_SAMPLES_SHAPERECTST)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+wordrectst: common util wordreccommon
+	($(CHDIR) $(LIPITK_SAMPLES_WORDRECTST)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+wordreccommon:
+	($(CHDIR) $(LIPITK_WORDREC_COMMON)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+shapereccommon:
+	($(CHDIR) $(LIPITK_SHAPEREC_COMMON)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+util:
+	($(CHDIR) $(LIPITK_SRC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+utils:
+	($(CHDIR) $(LIPITK_SRC_UTILS)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+common:
+	($(CHDIR) $(LIPITK_COMMON)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+clean-common:
+	($(CHDIR) $(LIPITK_COMMON)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean-wordreccommon:
+	($(CHDIR) $(LIPITK_WORDREC_COMMON)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean-shaperectst: clean-common clean-util  clean-shapereccommon
+	($(CHDIR) $(LIPITK_SAMPLES_SHAPERECTST)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean-wordrectst: clean-common clean-wordreccommon clean-util 
+	($(CHDIR) $(LIPITK_SAMPLES_WORDRECTST)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean-shapereccommon:
+	($(CHDIR) $(LIPITK_SHAPEREC_COMMON)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean-samples:
+	($(CHDIR) $(LIPITK_SAMPLES)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean-util:
+	($(CHDIR) $(LIPITK_SRC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean-utils:
+	($(CHDIR) $(LIPITK_SRC_UTILS)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+clean:
+	$(ECHO) Making clean.
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	$(ECHO) "Making clean $$subdir"; \
+	($(CHDIR) $(LIPITK_SAMPLES)/$$subdir/$(LINUX_LOCATION) && $(MAKE) -f Makefile.$(OS) clean) \
+	done;
+

@@ -1,0 +1,47 @@
+include $(LIPI_ROOT)/global.mk
+SUBDIRS= common pointfloat l7 npen substroke
+
+.PHONY : all clean common pointfloat l7 npen substroke clean-common clean-pointfloat clean-l7 clean-npen clean-substroke
+
+all :	
+	$(ECHO) Making ...
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	$(ECHO) "Making  $($subdir) directory... "; \
+	($(CHDIR) $(LIPITK_SHAPEREC_FE)/$$subdir/$(LINUX_LOCATION) && $(MAKE) -f Makefile.$(OS) all) \
+	done;
+common:  
+	($(CHDIR) $(LIPITK_SHAPEREC_FE_COMMON)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+pointfloat: 
+	($(CHDIR) $(LIPITK_SHAPEREC_FE_POINTFLOAT)/$(LINUX_LOCATION); -f Makefile.$(OS) all)
+
+l7: 
+	($(CHDIR) $(LIPITK_SHAPEREC_FE_POINTFLOAT)/$(LINUX_LOCATION); -f Makefile.$(OS) all)
+
+npen: 
+	($(CHDIR) $(LIPITK_SHAPEREC_FE_POINTFLOAT)/$(LINUX_LOCATION); -f Makefile.$(OS) all)
+
+substroke: 
+	($(CHDIR) $(LIPITK_RECO_SHAPEREC_FE_SS)/$(LINUX_LOCATION); -f Makefile.$(OS) all)
+
+clean-common:
+	($(CHDIR) $(LIPITK_SHAPEREC_FE_COMMON)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean )
+
+clean-pointfloat:
+	($(CHDIR) $(LIPITK_SHAPEREC_FE_POINTFLOAT)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean )
+
+clean-l7:
+	($(CHDIR) $(LIPITK_SHAPEREC_FE_POINTFLOAT)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean )
+
+clean-npen:
+	($(CHDIR) $(LIPITK_SHAPEREC_FE_POINTFLOAT)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean )
+
+clean-substroke:
+	($(CHDIR) $(LIPITK_RECO_SHAPEREC_FE_SS)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean )
+
+clean:
+	@echo Making clean.
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	echo "Making clean $$subdir"; \
+	($(CHDIR) $(LIPITK_SHAPEREC_FE)/$$subdir/$(LINUX_LOCATION) && $(MAKE) -f Makefile.$(OS) clean) \
+	done;

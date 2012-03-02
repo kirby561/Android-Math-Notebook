@@ -1,0 +1,44 @@
+include $(LIPI_ROOT)/global.mk
+
+ORIGINALSRC= LTKCheckSumGenerate.cpp \
+     LTKConfigFileReader.cpp \
+     LTKInkFileReader.cpp \
+     LTKInkFileWriter.cpp \
+     LTKLoggerUtil.cpp \
+     LTKInkUtils.cpp \
+     LTKStrEncoding.cpp \
+     LTKErrors.cpp \
+     LTKStringUtil.cpp \
+     LTKVersionCompatibilityCheck.cpp \
+     LTKLinuxUtil.cpp \
+     LTKOSUtilFactory.cpp \
+	LTKImageWriter.cpp
+
+SRC=$(addprefix $(LIPITK_SRC_UTILS_LIB)/, $(ORIGINALSRC))
+
+H=$(SRC:.cpp=.h)
+
+OBJ=$(SRC:.cpp=.o)
+
+TARGET=libutil.a
+
+INC=-I$(LIPITK_COMMON) \
+    -I$(LIPITK_SRC_INCLUDE) \
+    -I$(LIPITK_STATIC_LIBDIR)
+
+LIBDIR=$(LIPITK_STATIC_LIBDIR)
+
+all: ${OBJ} ${SRC}
+	$(AR) ${TARGET} ${OBJ}
+	$(CP) ${TARGET} ${LIBDIR}
+
+clean:
+	-@$(REMOVE) $(LIPITK_SRC_UTILS_LIB)/*.o
+	-@$(REMOVE) ${TARGET}
+	-@$(REMOVE) $(LIBDIR)/${TARGET}
+
+.cpp.o:${SRC} 
+	$(CC_x64) ${FPIC} ${INC} $(CFLAGS) $< -o $@
+
+
+

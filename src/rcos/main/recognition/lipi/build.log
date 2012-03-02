@@ -1,0 +1,217 @@
+echo Making ...
+Making ...
+list='src '; for subdir in $list; do \
+	echo "Making   directory... "; \
+	(cd /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/$subdir/linux-x64 && make -f Makefile.linux all) \
+	done;
+Making   directory... 
+make[1]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/linux-x64'
+echo Making ...
+Making ...
+list='common util/lib reco/wordrec/common reco/shaperec/common lipiengine reco apps util '; for subdir in $list; do \
+	echo "Making   directory... "; \
+	(cd /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/$subdir/linux-x64 && make -f Makefile.linux all) \
+	done;
+Making   directory... 
+make[2]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/common/linux-x64'
+ar rc libcommon.a /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/common/LTKCaptureDevice.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/common/LTKChannel.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/common/LTKException.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/common/LTKScreenContext.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/common/LTKTrace.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/common/LTKTraceFormat.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/common/LTKTraceGroup.o
+cp  libcommon.a /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib
+make[2]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/common/linux-x64'
+Making   directory... 
+make[2]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/linux-x64'
+ar rc libutil.a /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKCheckSumGenerate.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKConfigFileReader.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKInkFileReader.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKInkFileWriter.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKLoggerUtil.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKInkUtils.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKStrEncoding.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKErrors.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKStringUtil.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKVersionCompatibilityCheck.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKLinuxUtil.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKOSUtilFactory.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKImageWriter.o
+cp  libutil.a /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib
+make[2]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/linux-x64'
+Making   directory... 
+make[2]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/wordrec/common/linux-x64'
+ar rc libwordreccommon.a /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/wordrec/common/LTKRecognitionContext.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/wordrec/common/LTKWordRecoConfig.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/wordrec/common/LTKWordRecoResult.o
+cp  libwordreccommon.a /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib
+make[2]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/wordrec/common/linux-x64'
+Making   directory... 
+make[2]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/common/linux-x64'
+ar rc libshaperecommon.a /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/common/LTKShapeRecoConfig.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/common/LTKShapeRecognizer.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/common/LTKShapeRecoResult.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/common/LTKShapeRecoUtil.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/common/LTKShapeSample.o 
+cp  libshaperecommon.a /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib
+make[2]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/common/linux-x64'
+Making   directory... 
+make[2]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lipiengine/linux-x64'
+g++ -m64 -Wno-deprecated  -shared  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -ldl -lc  -o liblipiengine.so /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lipiengine/lipiengine.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lipiengine/LipiEngineModule.o -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -lwordreccommon -lutil -lcommon -lshaperecommon 
+cp  liblipiengine.so /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/lib
+make[2]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lipiengine/linux-x64'
+Making   directory... 
+make[2]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/linux-x64'
+echo Making ...
+Making ...
+list='shaperec wordrec'; for subdir in $list; do \
+	echo "Making   directory... "; \
+	(cd /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/$subdir/linux-x64 && make -f Makefile.linux all) \
+	done;
+Making   directory... 
+make[3]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/linux-x64'
+echo Making ...
+Making ...
+list='common featureextractor nn preprocessing activedtw neuralnet'; for subdir in $list; do \
+	echo "Making   directory... "; \
+	(cd /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/$subdir/linux-x64 && make -f Makefile.linux all) \
+	done;
+Making   directory... 
+make[4]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/common/linux-x64'
+ar rc libshaperecommon.a /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/common/LTKShapeRecoConfig.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/common/LTKShapeRecognizer.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/common/LTKShapeRecoResult.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/common/LTKShapeRecoUtil.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/common/LTKShapeSample.o 
+cp  libshaperecommon.a /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib
+make[4]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/common/linux-x64'
+Making   directory... 
+make[4]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/linux-x64'
+echo Making ...
+Making ...
+list='common pointfloat l7 npen substroke'; for subdir in $list; do \
+	echo "Making   directory... "; \
+	(cd /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/$subdir/linux-x64 && make -f Makefile.linux all) \
+	done;
+Making   directory... 
+make[5]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/common/linux-x64'
+ar rc libfeatureextractorcommon.a /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/common/LTKShapeFeatureExtractorFactory.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/common/LTKShapeFeatureExtractor.o
+cp  libfeatureextractorcommon.a /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib
+make[5]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/common/linux-x64'
+Making   directory... 
+make[5]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/pointfloat/linux-x64'
+g++ -m64 -Wno-deprecated  -shared  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -ldl -lc  -o libpointfloat.so /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/pointfloat/PointFloat.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/pointfloat/PointFloatShapeFeature.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/pointfloat/PointFloatShapeFeatureExtractor.o  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -lcommon -lutil -lfeatureextractorcommon 
+cp  libpointfloat.so /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/lib
+make[5]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/pointfloat/linux-x64'
+Making   directory... 
+make[5]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/l7/linux-x64'
+g++ -m64 -Wno-deprecated  -shared  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -ldl -lc  -o libl7.so /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/l7/l7.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/l7/L7ShapeFeature.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/l7/L7ShapeFeatureExtractor.o  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -lcommon -lutil -lfeatureextractorcommon 
+cp  libl7.so /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/lib
+make[5]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/l7/linux-x64'
+Making   directory... 
+make[5]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/npen/linux-x64'
+g++ -m64 -Wno-deprecated  -shared  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -ldl -lc  -o libnpen.so /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/npen/NPen.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/npen/NPenShapeFeature.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/npen/NPenShapeFeatureExtractor.o  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -lcommon -lutil -lfeatureextractorcommon -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/lib 
+cp  libnpen.so /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/lib
+make[5]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/npen/linux-x64'
+Making   directory... 
+make[5]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/substroke/linux-x64'
+g++ -m64 -Wno-deprecated  -shared  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -ldl -lc  -o libsubstroke.so /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/substroke/SubStroke.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/substroke/SubStrokeShapeFeature.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/substroke/SubStrokeShapeFeatureExtractor.o  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -lcommon -lutil -lfeatureextractorcommon 
+cp  libsubstroke.so /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/lib
+make[5]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/substroke/linux-x64'
+make[4]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/featureextractor/linux-x64'
+Making   directory... 
+make[4]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/nn/linux-x64'
+g++ -m64 -Wno-deprecated  -shared  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -ldl -lc  -o libnn.so /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/nn/NN.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/nn/NNShapeRecognizer.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/nn/NNAdapt.o  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -lshaperecommon -lutil -lcommon -lfeatureextractorcommon -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/lib 
+cp  libnn.so /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/lib
+make[4]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/nn/linux-x64'
+Making   directory... 
+make[4]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/preprocessing/linux-x64'
+g++ -m64 -Wno-deprecated  -shared  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -ldl -lc  -o libpreproc.so /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/preprocessing/LTKPreprocessor.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/preprocessing/preprocessing.o  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -lutil -lcommon -lshaperecommon  
+cp  libpreproc.so /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/lib
+make[4]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/preprocessing/linux-x64'
+Making   directory... 
+make[4]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/activedtw/linux-x64'
+g++ -m64 -Wno-deprecated  -shared  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -ldl -lc  -o libactivedtw.so /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/activedtw/ActiveDTW.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/activedtw/ActiveDTWShapeRecognizer.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/activedtw/ActiveDTWClusterModel.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/activedtw/ActiveDTWShapeModel.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/activedtw/ActiveDTWAdapt.o  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -lshaperecommon -lutil -lcommon -lfeatureextractorcommon -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/lib 
+cp  libactivedtw.so /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/lib
+make[4]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/activedtw/linux-x64'
+Making   directory... 
+make[4]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/neuralnet/linux-x64'
+g++ -m64 -Wno-deprecated  -shared  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -ldl -lc  -o libneuralnet.so /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/neuralnet/NeuralNet.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/neuralnet/NeuralNetShapeRecognizer.o  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -lshaperecommon -lutil -lcommon -lfeatureextractorcommon -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/lib 
+cp  libneuralnet.so /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/lib
+make[4]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/neuralnet/linux-x64'
+make[3]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/shaperec/linux-x64'
+Making   directory... 
+make[3]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/wordrec/linux-x64'
+echo Making ...
+Making ...
+list='common boxfld'; for subdir in $list; do \
+	echo "Making   directory... "; \
+	(cd /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/wordrec/$subdir/linux-x64 && make -f Makefile.linux all) \
+	done;
+Making   directory... 
+make[4]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/wordrec/common/linux-x64'
+ar rc libwordreccommon.a /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/wordrec/common/LTKRecognitionContext.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/wordrec/common/LTKWordRecoConfig.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/wordrec/common/LTKWordRecoResult.o
+cp  libwordreccommon.a /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib
+make[4]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/wordrec/common/linux-x64'
+Making   directory... 
+make[4]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/wordrec/boxfld/linux-x64'
+g++ -m64 -Wno-deprecated  -shared -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -ldl -lc  -o libboxfld.so /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/wordrec/boxfld/BoxFieldRecognizer.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/wordrec/boxfld/boxfld.o  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -lutil -lcommon -lshaperecommon -lwordreccommon 
+cp  libboxfld.so /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/lib
+make[4]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/wordrec/boxfld/linux-x64'
+make[3]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/wordrec/linux-x64'
+make[2]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/reco/linux-x64'
+Making   directory... 
+make[2]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/apps/linux-x64'
+echo Making ...
+Making ...
+list='samples'; for subdir in $list; do \
+	echo "Making   directory... "; \
+	(cd /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/apps/$subdir/linux-x64 && make -f Makefile.linux all) \
+	done;
+Making   directory... 
+make[3]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/apps/samples/linux-x64'
+echo Making ...
+Making ...
+list='shaperectst wordrectst'; for subdir in $list; do \
+	echo "Making   directory... "; \
+	(cd /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/apps/samples/$subdir/linux-x64 && make -f Makefile.linux all) \
+	done;
+Making   directory... 
+make[4]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/apps/samples/shaperectst/linux-x64'
+g++ -m64 -Wno-deprecated  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -o shaperectst /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/apps/samples/shaperectst/shaperectst.o  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -lutil -lcommon -lshaperecommon -ldl -lc 
+cp  shaperectst /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/bin
+make[4]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/apps/samples/shaperectst/linux-x64'
+Making   directory... 
+make[4]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/apps/samples/wordrectst/linux-x64'
+g++ -m64 -Wno-deprecated  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -o wordrectst /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/apps/samples/wordrectst/wordrectst.o  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -lutil -lcommon -lwordreccommon -ldl -lc 
+cp  wordrectst /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/bin
+make[4]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/apps/samples/wordrectst/linux-x64'
+make[3]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/apps/samples/linux-x64'
+make[2]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/apps/linux-x64'
+Making   directory... 
+make[2]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/linux-x64'
+echo Making ...
+Making ...
+list='lib imgwriter run mdv logger featurefilewriter'; for subdir in $list; do \
+	echo "Making   directory... "; \
+	(cd /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/$subdir/linux-x64 && make  -f Makefile.linux all) \
+	done;
+Making   directory... 
+make[3]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/linux-x64'
+ar rc libutil.a /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKCheckSumGenerate.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKConfigFileReader.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKInkFileReader.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKInkFileWriter.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKLoggerUtil.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKInkUtils.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKStrEncoding.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKErrors.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKStringUtil.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKVersionCompatibilityCheck.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKLinuxUtil.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKOSUtilFactory.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/LTKImageWriter.o
+cp  libutil.a /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib
+make[3]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/lib/linux-x64'
+Making   directory... 
+make[3]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/imgwriter/linux-x64'
+g++ -m64 -Wno-deprecated  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -o imgwriter /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/imgwriter/main.o  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -lutil -lcommon -lshaperecommon  -ldl -lc 
+cp  imgwriter /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/bin
+make[3]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/imgwriter/linux-x64'
+Making   directory... 
+make[3]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/run/linux-x64'
+echo Making ...
+Making ...
+list='runshaperec runwordrec'; for subdir in $list; do \
+	echo "Making   directory... "; \
+	(cd /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/run/$subdir/linux-x64 && make -f Makefile.linux all) \
+	done;
+Making   directory... 
+make[4]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/run/runshaperec/linux-x64'
+g++ -m64 -Wno-deprecated  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -o runshaperec /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/run/runshaperec/RunShaperec.o  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -lutil -lcommon -lshaperecommon -lfeatureextractorcommon -ldl -lc 
+cp  runshaperec /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/bin
+make[4]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/run/runshaperec/linux-x64'
+Making   directory... 
+make[4]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/run/runwordrec/linux-x64'
+g++ -m64 -Wno-deprecated  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -o runwordrec /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/run/runwordrec/RunWordrec.o  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -lutil -lcommon -lshaperecommon -lwordreccommon  -ldl -lc 
+cp  runwordrec /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/bin
+make[4]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/run/runwordrec/linux-x64'
+make[3]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/run/linux-x64'
+Making   directory... 
+make[3]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/mdv/linux-x64'
+g++ -m64 -Wno-deprecated  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -o mdv /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/mdv/mdv.o  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -lutil -lcommon -ldl -lc 
+cp  mdv /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/bin
+make[3]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/mdv/linux-x64'
+Making   directory... 
+make[3]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/logger/linux-x64'
+g++ -m64 -Wno-deprecated  -shared  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -ldl -lc  -o liblogger.so /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/logger/logger.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/logger/LTKLogger.o -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -lutil 
+cp  liblogger.so /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/lib
+make[3]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/logger/linux-x64'
+Making   directory... 
+make[3]: Entering directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/featurefilewriter/linux-x64'
+g++ -m64 -Wno-deprecated  -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -o featurefilewriter /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/featurefilewriter/main.o /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/featurefilewriter/featurefilewriter.o -L/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/lib -lshaperecommon -lutil -lcommon -lfeatureextractorcommon -ldl -lc 
+cp  featurefilewriter /home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/bin
+make[3]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/featurefilewriter/linux-x64'
+make[2]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/util/linux-x64'
+make[1]: Leaving directory `/home/jon/Downloads/lipi-core-toolkit4.0.0-src-linux/src/linux-x64'

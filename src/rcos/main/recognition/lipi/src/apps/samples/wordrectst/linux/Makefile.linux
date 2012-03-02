@@ -1,0 +1,37 @@
+include $(LIPI_ROOT)/global.mk
+
+ORIGINALSRC=  \
+	wordrectst.cpp 
+
+SRC=$(addprefix $(LIPITK_SAMPLES_WORDRECTST)/, $(ORIGINALSRC))
+
+H=$(SRC:.cpp=.h)
+
+OBJ=$(SRC:.cpp=.o)
+
+TARGET=wordrectst
+
+INC= -I$(LIPITK_SRC_UTILS_LIB) \
+     -I$(LIPITK_SRC_INCLUDE)
+
+LIB= -lutil \
+     -lcommon \
+     -lwordreccommon 
+
+LIBDIR=$(LIPITK_STATIC_LIBDIR) 
+TARGETLIB= $(LIPITK_BIN)
+
+all: ${OBJ} ${SRC}
+	$(CC) $(CPPFLAGS) -L${LIBDIR} -o ${TARGET} ${OBJ}  -L$(LIBDIR) $(LIB) $(LINKLIB)
+	$(CP) ${TARGET} ${TARGETLIB}
+	
+clean:
+	-@$(REMOVE) $(LIPITK_SAMPLES_WORDRECTST)/*.o
+	-@$(REMOVE) ${TARGET}
+	-@$(REMOVE) $(TARGETLIB)/${TARGET}
+
+.cpp.o:${SRC} 
+	$(CC) ${INC} $(CFLAGS) $< -o $@
+
+
+

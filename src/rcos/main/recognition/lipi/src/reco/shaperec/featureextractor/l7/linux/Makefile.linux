@@ -1,0 +1,40 @@
+include $(LIPI_ROOT)/global.mk
+
+ORIGINALSRC= l7.cpp \
+     L7ShapeFeature.cpp \
+     L7ShapeFeatureExtractor.cpp
+
+SRC=$(addprefix $(LIPITK_SHAPEREC_FE_L7)/, $(ORIGINALSRC))
+
+H=$(SRC:.cpp=.h)
+
+OBJ=$(SRC:.cpp=.o)
+
+TARGET=libl7.so
+
+INC=-I$(LIPITK_SRC_INCLUDE) \
+    -I$(LIPITK_SRC_UTILS_LIB) \
+    -I$(LIPITK_SHAPEREC_FE_COMMON)
+
+LIB= -lcommon\
+	 -lutil \
+	 -lfeatureextractorcommon \
+
+LIBDIR= $(LIPITK_STATIC_LIBDIR)
+
+TARGETLIB=$(LIPITK_DYNAMIC_LIBDIR)
+
+all: ${OBJ} ${SRC}
+	$(CC) $(CPPFLAGS) $(SHFLAGS) -L${LIBDIR} $(LINKLIB) -o ${TARGET} ${OBJ}  -L$(LIBDIR) $(LIB)
+	$(CP) ${TARGET} ${TARGETLIB}
+
+clean:
+	-@$(REMOVE) $(LIPITK_SHAPEREC_FE_L7)/*.o
+	-@$(REMOVE) ${TARGET}
+	-@$(REMOVE) $(TARGETLIB)/${TARGET}
+
+.cpp.o:${SRC} 
+	$(CC) ${INC} $(CFLAGS) $< -o $@
+
+
+

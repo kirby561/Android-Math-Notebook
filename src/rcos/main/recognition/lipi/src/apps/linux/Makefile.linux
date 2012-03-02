@@ -1,0 +1,57 @@
+include $(LIPI_ROOT)/global.mk
+SUBDIRS= samples
+.PHONY : all clean samples shaperectst wordrectst clean-shaperectst clean-wordrectst
+all :	
+	$(ECHO) Making ...
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	$(ECHO) "Making  $($subdir) directory... "; \
+	($(CHDIR) $(LIPITK_SRC_APPS)/$$subdir/$(LINUX_LOCATION) && $(MAKE) -f Makefile.$(OS) all) \
+	done;
+
+samples:
+	($(CHDIR) $(LIPITK_SAMPLES)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+shaperectst: common util shapereccommon
+	($(CHDIR) $(LIPITK_SAMPLES_SHAPERECTST)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+wordrectst: common util wordreccommon
+	($(CHDIR) $(LIPITK_SAMPLES_WORDRECTST)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+common:
+	($(CHDIR) $(LIPITK_COMMON)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+util:
+	($(CHDIR) $(LIPITK_SRC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+shapereccommon:
+	($(CHDIR) $(LIPITK_SHAPEREC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) common)
+
+wordreccommon:
+	($(CHDIR) $(LIPITK_WORDREC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) common)
+
+clean-shaperectst: clean-common clean-util clean-shapereccommon
+	($(CHDIR) $(LIPITK_SAMPLES_SHAPERECTST)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean-wordrectst: clean-common clean-util clean-wordreccommon
+	($(CHDIR) $(LIPITK_SAMPLES_WORDRECTST)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean-common:
+	($(CHDIR) $(LIPITK_COMMON)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean-util:
+	($(CHDIR) $(LIPITK_SRC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean-shapereccommon:
+	($(CHDIR) $(LIPITK_SHAPEREC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean-common)
+
+clean-wordreccommon:
+	($(CHDIR) $(LIPITK_WORDREC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean-common)
+
+
+clean:
+	$(ECHO) Making clean.
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	$(ECHO) "Making clean $$subdir"; \
+	($(CHDIR) $(LIPITK_SRC_APPS)/$$subdir/$(LINUX_LOCATION) && $(MAKE) -f Makefile.$(OS) clean) \
+	done;
+

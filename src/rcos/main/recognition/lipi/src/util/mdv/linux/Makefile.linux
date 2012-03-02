@@ -1,0 +1,29 @@
+include $(LIPI_ROOT)/global.mk
+SRC= $(LIPITK_SRC_UTILS_MDV)/mdv.cpp
+
+H=$(SRC:.cpp=.h)
+OBJ=$(SRC:.cpp=.o)
+
+TARGET=mdv
+
+INC=-I$(LIPITK_SRC_INCLUDE) \
+    -I$(LIPITK_SRC_UTILS_LIB) 
+
+LIB= -lutil \
+	-lcommon
+
+LIBDIR=$(LIPITK_STATIC_LIBDIR)
+TARGETLIB=$(LIPITK_DYNAMIC_LIBDIR)
+
+all: ${OBJ} ${SRC}
+	$(CC) $(CPPFLAGS) -L${LIBDIR} -o ${TARGET} ${OBJ}  -L$(LIBDIR) $(LIB) $(LINKLIB)
+	$(CP) ${TARGET} $(LIPITK_BIN)
+
+clean:
+	-@$(REMOVE) $(LIPITK_SRC_UTILS_MDV)/*.o
+	-@$(REMOVE) ${TARGET}
+	-@$(REMOVE) $(LIPITK_BIN)/${TARGET}
+
+.cpp.o:${SRC} 
+	$(CC) ${INC} $(CFLAGS) $< -o $@
+

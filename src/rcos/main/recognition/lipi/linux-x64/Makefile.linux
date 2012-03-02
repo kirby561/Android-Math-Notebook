@@ -1,0 +1,58 @@
+include $(LIPI_ROOT)/global.mk
+SUBDIRS= src 
+
+.PHONY : all src common reco util apps
+
+all:
+	$(ECHO) Making ...
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	$(ECHO) "Making  $($subdir) directory... "; \
+	($(CHDIR) $(LIPI_ROOT)/$$subdir/$(LINUX_x64_LOCATION) && $(MAKE) -f Makefile.$(OS) all) \
+	done;
+
+src :
+	($(CHDIR) $(LIPITK_SRC)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+common :
+	($(CHDIR) $(LIPITK_COMMON)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+reco :
+	($(CHDIR) $(LIPITK_RECO)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+tools :
+	($(CHDIR) $(LIPITK_TOOLS)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+util :
+	($(CHDIR) $(LIPITK_SRC_UTILS)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+apps :
+	($(CHDIR) $(LIPITK_SRC_APPS)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+clean-common:
+	($(CHDIR) $(LIPITK_COMMON)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean-reco:
+	($(CHDIR) $(LIPITK_RECO)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean-tools:
+	($(CHDIR) $(LIPITK_TOOLS)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean-util:
+	($(CHDIR) $(LIPITK_SRC_UTILS)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean-apps :
+	($(CHDIR) $(LIPITK_SRC_APPS)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean :
+	$(ECHO) Making clean.
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	$(ECHO) "Making clean $$subdir"; \
+	($(CHDIR) $(LIPI_ROOT)/$$subdir/$(LINUX_x64_LOCATION) && $(MAKE) -f Makefile.$(OS) clean) \
+	done;
+tar :
+	$(PERL) $(LIPITK_SCRIPT)/build.pl -pkgname $(LIPITK)$(VERSION)
+	( $(CHDIR) $(LIPITK_PACK); ($(TAR_CVF) $(LIPITK)$(VERSION)-$(OS).$(TAR_EXT) $(LIPITK)$(VERSION)) )
+	( $(CHDIR) $(LIPITK_PACK); $(RMDIR) $(LIPITK)$(VERSION))
+	
+	
+

@@ -1,0 +1,31 @@
+include $(LIPI_ROOT)/global.mk
+
+SRC= $(LIPITK_SHAPEREC_FE_COMMON)/LTKShapeFeatureExtractorFactory.cpp \
+	$(LIPITK_SHAPEREC_FE_COMMON)/LTKShapeFeatureExtractor.cpp 
+#	$(LIPITK_SHAPEREC_FE_COMMON)/LTKShapeFeaturePtr.cpp
+
+H=$(SRC:.cpp=.h)
+
+OBJ=$(SRC:.cpp=.o)
+
+TARGET=libfeatureextractorcommon.a
+
+INC=-I$(LIPITK_SRC_INCLUDE) \
+    -I$(LIPITK_SRC_UTILS_LIB)
+
+LIBDIR= $(LIPITK_STATIC_LIBDIR)
+
+all: ${OBJ} ${SRC}
+	$(AR) ${TARGET} ${OBJ}
+	$(CP) ${TARGET} ${LIBDIR}
+
+clean:
+	-@$(REMOVE) $(LIPITK_SHAPEREC_FE_COMMON)/*.o
+	-@$(REMOVE) ${TARGET}
+	-@$(REMOVE) $(LIBDIR)/${TARGET}
+
+.cpp.o:${SRC} 
+	$(CC_x64) ${FPIC} ${INC} $(CFLAGS) $< -o $@
+
+
+

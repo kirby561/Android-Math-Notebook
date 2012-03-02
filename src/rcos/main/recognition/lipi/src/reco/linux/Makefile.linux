@@ -1,0 +1,111 @@
+include $(LIPI_ROOT)/global.mk
+SUBDIRS= shaperec wordrec
+
+.PHONY : all shaperec wordrec shapereccommon shaperecpreprocessing wordreccommon wordrecpreprocessing lipiengine
+
+all :	
+	$(ECHO) Making ...
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	$(ECHO) "Making  $($subdir) directory... "; \
+	($(CHDIR) $(LIPITK_RECO)/$$subdir/$(LINUX_LOCATION) && $(MAKE) -f Makefile.$(OS) all) \
+	done;
+shaperec:
+	($(CHDIR) $(LIPITK_SHAPEREC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+wordrec:
+	($(CHDIR) $(LIPITK_WORDREC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+#################################################################################
+#
+# shapereccommon
+#
+#################################################################################
+shapereccommon:
+	($(CHDIR) $(LIPITK_SHAPEREC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) $@)
+
+clean-shapereccommon: 
+	($(CHDIR) $(LIPITK_SHAPEREC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) $@)
+
+#################################################################################
+#
+# shaperecpreprocessing
+#
+#################################################################################
+
+shaperecpreprocessing :
+	($(CHDIR) $(LIPITK_SHAPEREC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) preprocessing)
+
+clean-shaperecpreprocessing: 
+	($(CHDIR) $(LIPITK_SHAPEREC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean-preprocessing)
+
+boxfld : common utilslib shapereccommon wordreccommon 
+	($(CHDIR) $(LIPITK_WORDREC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) boxfld)
+
+#################################################################################
+#
+# wordreccommon
+#
+#################################################################################
+
+wordreccommon:
+	($(CHDIR) $(LIPITK_WORDREC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) common)
+
+clean-wordreccommon: 
+	($(CHDIR) $(LIPITK_WORDREC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean-common)
+
+#################################################################################
+#
+# word preprocessing
+#
+#################################################################################
+
+wordrecpreprocessing:
+	($(CHDIR) $(LIPITK_WORDREC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) preprocessing)
+
+clean-wordrecpreprocessing:
+	($(CHDIR) $(LIPITK_WORDREC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean-preprocessing)
+
+utils :
+	($(CHDIR) $(LIPITK_SRC_UTILS)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+clean-utils :
+	($(CHDIR) $(LIPITK_SRC_UTILS)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean-shaperec:
+	($(CHDIR) $(LIPITK_SHAPEREC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean-wordrec:
+	($(CHDIR) $(LIPITK_WORDREC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+common:
+	($(CHDIR) $(LIPITK_COMMON)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+utilslib:
+	($(CHDIR) $(LIPITK_SRC_UTILS_LIB)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+lipiengine:
+	($(CHDIR) $(LIPITK_LIPIENGINE)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+clean-lipiengine:
+	($(CHDIR) $(LIPITK_LIPIENGINE)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean-boxfld:  clean-utilslib
+	($(CHDIR) $(LIPITK_WORDREC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean-boxfld)
+
+clean-common: 
+	($(CHDIR) $(LIPITK_COMMON)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean-utilslib: 
+	($(CHDIR) $(LIPITK_SRC_UTILS_LIB)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean-util:
+	($(CHDIR) $(LIPITK_RECO_UTIL)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean:
+	@echo Making clean.
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	echo "Making clean $$subdir"; \
+	($(CHDIR) $(LIPITK_RECO)/$$subdir/$(LINUX_LOCATION) && $(MAKE) -f Makefile.$(OS) clean) \
+	done;
+
+

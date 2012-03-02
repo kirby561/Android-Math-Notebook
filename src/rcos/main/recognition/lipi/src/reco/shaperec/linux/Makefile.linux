@@ -1,0 +1,142 @@
+include $(LIPI_ROOT)/global.mk
+SUBDIRS= common featureextractor nn preprocessing activedtw neuralnet
+
+.PHONY : featureextractor all clean shapereccommon nn preprocessing activedtw clean-common clean-featureextractor clean-nn clean-preprocessing clean-activedtw  clean-neuralnet
+
+all :     
+	$(ECHO) Making ...
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	$(ECHO) "Making  $($subdir) directory... "; \
+	($(CHDIR) $(LIPITK_SHAPEREC)/$$subdir/$(LINUX_LOCATION) && $(MAKE) -f Makefile.$(OS) all) \
+	done;
+common:  
+	($(CHDIR) $@; $(MAKE) -f Makefile.$(OS) all)
+
+###########################################################################
+#
+#   Feature extractor MODULE
+#
+###########################################################################
+
+featureextractor:  
+	($(CHDIR) $(LIPITK_SHAPEREC_)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all) 
+
+clean-featureextractor:
+	($(CHDIR) $(LIPITK_SHAPEREC_FE)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean ) 
+
+###########################################################################
+#
+#   NN
+#
+###########################################################################
+
+nn : src-common utilslib shapereccommon featureextractor 
+	($(CHDIR) $(LIPITK_SHAPEREC_NN)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+clean-nn: clean-src-common clean-utilslib  clean-shapereccommon clean-featureextractor clean-preprocessing clean-lipiengine
+	($(CHDIR) $(LIPITK_SHAPEREC_NN)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean ) 
+
+###########################################################################
+#
+#   Preprocessing
+#
+###########################################################################
+
+preprocessing:
+	($(CHDIR) $(LIPITK_SHAPEREC_PREPROC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+clean-preprocessing:
+	($(CHDIR) $(LIPITK_SHAPEREC_PREPROC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+     
+###########################################################################
+#
+#  activedtw
+#
+###########################################################################
+
+activedtw : utilslib src-common shapereccommon featureextractor 
+	($(CHDIR) $(LIPITK_SHAPEREC_)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+clean-activedtw: clean-utilslib clean-src-common clean-shapereccommon clean-featureextractor
+	($(CHDIR) $(LIPITK_SHAPEREC_)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+     
+###########################################################################
+#
+#   Shaperec common
+#
+###########################################################################
+
+shapereccommon:
+	($(CHDIR) $(LIPITK_SHAPEREC_COMMON)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+clean-shapereccommon:
+	($(CHDIR) $(LIPITK_SHAPEREC_COMMON)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+###########################################################################
+#
+#  NEURALNET
+#
+###########################################################################
+
+neuralnet : utilslib src-common shapereccommon featureextractor 
+	($(CHDIR) $(LIPITK_SHAPEREC_NEURALNET)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+clean-neuralnet: clean-utilslib clean-src-common clean-shapereccommon clean-featureextractor
+	($(CHDIR) $(LIPITK_SHAPEREC_NEURALNET)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+###########################################################################
+#
+#   wordrec common
+#
+###########################################################################
+
+wordreccommon :
+	($(CHDIR) $(LIPITK_WORDREC_COMMON)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+clean-wordreccommon:
+	($(CHDIR) $(LIPITK_WORDREC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean-common)
+
+###########################################################################
+#
+#   Utils lib
+#
+###########################################################################
+
+utilslib: shapereccommon wordreccommon
+	($(CHDIR) $(LIPITK_SRC_UTILS)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+clean-utilslib:
+	($(CHDIR) $(LIPITK_SRC_UTILS)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+
+###########################################################################
+#
+#    src/common MODULE
+#
+###########################################################################
+src-common:
+	($(CHDIR) $(LIPITK_SRC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) common)
+
+clean-src-common:
+	($(CHDIR) $(LIPITK_SRC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean-common)
+
+
+###########################################################################
+#
+#    src/common MODULE
+#
+###########################################################################
+lipiengine:
+	($(CHDIR) $(LIPITK_SRC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) $@)
+
+clean-lipiengine:
+	($(CHDIR) $(LIPITK_SRC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) $@)
+
+
+clean:
+	@echo Making clean.
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	echo "Making clean $$subdir"; \
+	($(CHDIR) $(LIPITK_SHAPEREC)/$$subdir/$(LINUX_LOCATION) && $(MAKE) -f Makefile.$(OS) clean) \
+	done;
+

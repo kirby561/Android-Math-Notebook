@@ -1,0 +1,102 @@
+include $(LIPI_ROOT)/global.mk
+SUBDIRS= runshaperec runwordrec
+.PHONY: all runshaperec runwordrec clean
+all:	
+	$(ECHO) Making ...
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	$(ECHO) "Making  $($subdir) directory... "; \
+	($(CHDIR) $(LIPITK_SRC_UTILS_RUN)/$$subdir/$(LINUX_x64_LOCATION) && $(MAKE) -f Makefile.$(OS) all) \
+	done;
+
+###############################################################################
+#
+#  runshaperec
+#
+###############################################################################
+
+runshaperec:common shapereccommon wordreccommon featureextractorcommon lipiengine
+	($(CHDIR) $(LIPITK_SRC_UTILS_RUNSHAPEREC)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+clean-runshaperec: clean-common clean-utils  clean-shapereccommon
+	($(CHDIR) $(LIPITK_SRC_UTILS_RUNSHAPEREC)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+###############################################################################
+#
+#  runwordrec
+#
+###############################################################################
+
+runwordrec:common wordreccommon lipiengine
+	($(CHDIR) $(LIPITK_SRC_UTILS_RUNWORDREC)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+clean-runwordrec: clean-common clean-wordreccommon clean-utils
+	($(CHDIR) $(LIPITK_SRC_UTILS_RUNWORDREC)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+###############################################################################
+#
+#  src/common
+#
+###############################################################################
+
+common:
+	($(CHDIR) $(LIPITK_SRC)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) common)
+
+clean-common:
+	($(CHDIR) $(LIPITK_SRC)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) $@)
+
+###############################################################################
+#
+#  lipiengine
+#
+###############################################################################
+
+lipiengine:
+	($(CHDIR) $(LIPITK_SRC)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) $@)
+
+clean-lipiengine:
+	($(CHDIR) $(LIPITK_SRC)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) $@)
+
+###############################################################################
+#
+# shaprec common
+#
+###############################################################################
+
+shapereccommon:
+	($(CHDIR) $(LIPITK_RECO)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) $@)
+
+clean-shapereccommon:
+	($(CHDIR) $(LIPITK_RECO)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) $@)
+
+###############################################################################
+#
+# featureextractorcommon
+#
+###############################################################################
+
+featureextractorcommon:
+	($(CHDIR) $(LIPITK_SHAPEREC_FE_COMMON)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+clean-featureextractorcommon:
+	($(CHDIR) $(LIPITK_SHAPEREC_FE_COMMON)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+###############################################################################
+#
+# wordrec common
+#
+###############################################################################
+
+wordreccommon:
+	($(CHDIR) $(LIPITK_RECO)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) $@)
+
+clean-wordreccommon:
+	($(CHDIR) $(LIPITK_RECO)/$(LINUX_x64_LOCATION); $(MAKE) -f Makefile.$(OS) $@)
+
+clean:
+	$(ECHO) Making clean.
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	$(ECHO) "Making clean $$subdir"; \
+	($(CHDIR) $(LIPITK_SRC_UTILS_RUN)/$$subdir/$(LINUX_x64_LOCATION) && $(MAKE) -f Makefile.$(OS) clean) \
+	done;
+
+

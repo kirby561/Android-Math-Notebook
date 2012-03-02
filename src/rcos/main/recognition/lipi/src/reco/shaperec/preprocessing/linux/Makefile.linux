@@ -1,0 +1,42 @@
+include $(LIPI_ROOT)/global.mk
+
+ORIGINALSRC=  \
+    LTKPreprocessor.cpp \
+    preprocessing.cpp \
+
+SRC=$(addprefix $(LIPITK_SHAPEREC_PREPROC)/, $(ORIGINALSRC))
+
+H=$(SRC:.cpp=.h)
+
+OBJ=$(SRC:.cpp=.o)
+
+TARGET=libpreproc.so
+
+INC=-I$(LIPITK_COMMON) \
+    -I$(LIPITK_SRC_INCLUDE) \
+    -I$(LIPITK_SHAPEREC_COMMON) \
+    -I$(LIPITK_SRC_UTILS_LIB) \
+    -I$(LIPITK_RECO_UTIL)
+
+LIB= -lutil \
+     -lcommon \
+     -lshaperecommon 
+
+LIBDIR= $(LIPITK_STATIC_LIBDIR)
+
+TARGETLIB= $(LIPITK_DYNAMIC_LIBDIR)
+
+all: ${OBJ} ${SRC}
+	$(CC) $(CPPFLAGS) $(SHFLAGS) -L${LIBDIR} $(LINKLIB) -o ${TARGET} ${OBJ}  -L$(LIBDIR) $(LIB) 
+	$(CP) ${TARGET} ${TARGETLIB}
+
+clean:
+	-@$(REMOVE) $(LIPITK_SHAPEREC_PREPROC)/*.o
+	-@$(REMOVE) ${TARGET}
+	-@$(REMOVE) $(TARGETLIB)/${TARGET}
+
+.cpp.o:${SRC} 
+	$(CC) ${INC} $(CFLAGS) $< -o $@
+
+
+

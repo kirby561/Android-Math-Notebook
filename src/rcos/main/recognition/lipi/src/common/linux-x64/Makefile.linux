@@ -1,0 +1,37 @@
+include $(LIPI_ROOT)/global.mk
+ORIGINALSRC= LTKCaptureDevice.cpp \
+     LTKChannel.cpp \
+     LTKException.cpp \
+     LTKScreenContext.cpp \
+     LTKTrace.cpp \
+     LTKTraceFormat.cpp \
+     LTKTraceGroup.cpp 
+
+
+SRC=$(addprefix $(LIPITK_COMMON)/, $(ORIGINALSRC))
+H=$(SRC:.cpp=.h)
+OBJ=$(SRC:.cpp=.o)
+#OBJ = (patsubst %,$(LIPITK_COMMON)/%,$(SRC))
+
+TARGET=libcommon.a
+
+
+#-- to be passed from root
+INC=-I$(LIPITK_SRC_INCLUDE)\
+    -I$(LIPITK_SRC_UTILS_LIB)\
+    -I$(LIPITK_SRC_UTILS_IMGWRITER)\
+    -I$(LIPITK_SHAPEREC_COMMON)
+
+LIBDIR=$(LIPITK_STATIC_LIBDIR)
+
+all: ${OBJ} ${SRC} 
+	$(AR) ${TARGET} ${OBJ}
+	$(CP) ${TARGET} ${LIBDIR}
+
+clean:
+	-@$(REMOVE) $(TARGET)
+	-@$(REMOVE) $(LIPITK_COMMON)/*.o
+	-@$(REMOVE) $(LIBDIR)/${TARGET}
+.cpp.o:${SRC} 
+	$(CC_x64) ${FPIC} ${INC} $(CFLAGS) $< -o $@
+

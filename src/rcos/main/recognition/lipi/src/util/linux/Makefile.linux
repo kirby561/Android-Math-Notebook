@@ -1,0 +1,91 @@
+include $(LIPI_ROOT)/global.mk
+SUBDIRS= lib imgwriter run mdv logger featurefilewriter
+
+.PHONY : all lib imgwriter run mdv logger featurefilewriter
+all :	 
+	$(ECHO) Making ...
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	$(ECHO) "Making  $($subdir) directory... "; \
+	($(CHDIR) $(LIPITK_SRC_UTILS)/$$subdir/$(LINUX_LOCATION) && $(MAKE)  -f Makefile.$(OS) all) \
+	done;
+
+imgwriter : common lib
+	($(CHDIR) $(LIPITK_SRC_UTILS)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+lib :
+	($(CHDIR) $(LIPITK_SRC_UTILS)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+run : common lib  shapereccommon wordreccommon lipiengine
+	($(CHDIR) $(LIPITK_SRC_UTILS)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+clean-run: clean-common clean-shapereccommon clean-wordreccommon
+	($(CHDIR) $(LIPITK_SRC_UTILS_RUN)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+mdv : common lib
+	($(CHDIR) $(LIPITK_SRC_UTILS)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+	
+featurefilewriter : common lib
+	($(CHDIR) $(LIPITK_SRC_UTILS)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+###############################################################################
+#
+#  src/common
+#
+###############################################################################
+
+common:
+	($(CHDIR) $(LIPITK_SRC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) common)
+
+clean-common:
+	($(CHDIR) $(LIPITK_SRC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) $@)
+
+###############################################################################
+#
+#  lipiengine
+#
+###############################################################################
+
+lipiengine:
+	($(CHDIR) $(LIPITK_SRC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) $@)
+
+clean-lipiengine:
+	($(CHDIR) $(LIPITK_SRC)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) $@)
+
+###############################################################################
+#
+# shaprec common
+#
+###############################################################################
+
+shapereccommon:
+	($(CHDIR) $(LIPITK_RECO)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) $@)
+
+clean-shapereccommon:
+	($(CHDIR) $(LIPITK_RECO)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) $@)
+
+###############################################################################
+#
+# wordrec common
+#
+###############################################################################
+
+wordreccommon:
+	($(CHDIR) $(LIPITK_RECO)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) $@)
+
+clean-wordreccommon:
+	($(CHDIR) $(LIPITK_RECO)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) $@)
+
+clean-imgwriter :
+	($(CHDIR) $(LIPITK_SRC_UTILS_IMGWRITER)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+	
+clean-featurefilewriter :
+	($(CHDIR) $(LIPITK_SRC_UTILS_FFW)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean: 
+	echo "Making clean."
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	echo "Making clean $$subdir"; \
+	($(CHDIR) $(LIPITK_SRC_UTILS)/$$subdir/$(LINUX_LOCATION) && $(MAKE) -f Makefile.$(OS) clean) \
+	done;
+
+
