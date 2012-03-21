@@ -1,0 +1,38 @@
+include $(LIPI_ROOT)/global.mk
+
+ORIGINALSRC= \
+    LTKRecognitionContext.cpp \
+    LTKWordRecoConfig.cpp \
+    LTKWordRecoResult.cpp
+
+SRC=$(addprefix $(LIPITK_WORDREC_COMMON)/, $(ORIGINALSRC))
+
+H=$(SRC:.cpp=.h)
+
+OBJ=$(SRC:.cpp=.o)
+
+TARGET=libwordreccommon.a
+
+INC=-I$(LIPITK_COMMON) \
+    -I$(LIPITK_SRC_INCLUDE) \
+    -I$(LIPITK_SHAPEREC_COMMON) \
+    -I$(LIPITK_SRC_UTILS_LIB) \
+    -I$(LIPITK_RECO_UTIL) \
+    -I$(LIPITK_WORDREC_COMMON) 
+
+LIBDIR= $(LIPITK_STATIC_LIBDIR)
+
+all: ${OBJ} ${SRC}
+	$(AR) ${TARGET} ${OBJ}
+	$(CP) ${TARGET} ${LIBDIR}
+
+clean:
+	-@$(REMOVE) $(LIPITK_WORDREC_COMMON)/*.o
+	-@$(REMOVE) ${TARGET}
+	-@$(REMOVE) $(LIBDIR)/${TARGET}
+
+.cpp.o:${SRC} 
+	$(CC) ${INC} $(CFLAGS) $< -o $@
+
+
+
