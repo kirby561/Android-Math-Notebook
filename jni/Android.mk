@@ -81,7 +81,25 @@ LOCAL_SRC_FILES := util/logger/LTKLogger.cpp \
 		   common/LTKChannel.cpp \
 		   common/LTKTraceFormat.cpp \
 		   lipiengine/lipiengine.cpp \
-		   lipiengine/LipiEngineModule.cpp
+		   lipiengine/LipiEngineModule.cpp \
+		   reco/shaperec/common/LTKShapeRecoUtil.cpp \
+		   reco/shaperec/common/LTKShapeRecoConfig.cpp \
+		   reco/shaperec/common/LTKShapeRecoResult.cpp \
+		   reco/shaperec/common/LTKShapeSample.cpp \
+		   reco/shaperec/common/LTKShapeRecognizer.cpp \
+		   reco/shaperec/featureextractor/common/LTKShapeFeatureExtractor.cpp \
+		   reco/shaperec/featureextractor/common/LTKShapeFeatureExtractorFactory.cpp \
+		   reco/shaperec/nn/NN.cpp \
+		   reco/shaperec/nn/NNAdapt.cpp \
+		   reco/shaperec/nn/NNShapeRecognizer.cpp
+		   
+#######################################
+##        Application Link           ##
+#######################################
+include $(CLEAR_VARS)
 
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
+LOCAL_MODULE    := jnilink
+LOCAL_SRC_FILES := LipiTKJNIInterface.cpp
 
 include $(BUILD_SHARED_LIBRARY)

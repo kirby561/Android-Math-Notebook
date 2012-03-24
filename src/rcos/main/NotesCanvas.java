@@ -34,6 +34,9 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	private Matrix _viewTransform = new Matrix();
 	private Matrix _invViewTransform = new Matrix();
 	private int _mode;
+	
+	// ?? Debugging
+	private String DebugString = "";
 
 	// Vars for touch events
 	private float _origDistance;
@@ -252,7 +255,6 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 				// to see if we should start panning
 				//float pressure = event.getPressure();
 				float pressure = event.getSize();
-				Log.d("SIZE", "Size = " + pressure);
 				if (pressure > TranslationPressureThreshold) {
 					_gestureState = Panning;
 					_lastSpot = p;
@@ -278,8 +280,8 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 				// their finger has changed since the start and
 				// cancel the current stroke/start panning if it is
 				// above the threshold.
-				float pressure = event.getPressure();
-
+				//float pressure = event.getPressure();
+				float pressure = event.getSize();
 				if (_gestureState == Drawing && pressure > TranslationPressureThreshold) {
 					float x = event.getX();
 					float y = event.getY();
@@ -488,6 +490,11 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
 			if (_gestureState == Drawing)
 				drawStroke(canvas, _currentStroke, boundingBox);
+			
+			// ?? Debugging
+			//Paint DebugPaint = new Paint();
+			//DebugPaint.setColor(Color.GREEN);
+			//canvas.drawText(DebugString, 100, 100, DebugPaint);
 		}
 	}
 
