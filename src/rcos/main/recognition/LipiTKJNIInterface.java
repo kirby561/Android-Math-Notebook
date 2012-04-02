@@ -5,7 +5,6 @@ import rcos.main.Stroke;
 public class LipiTKJNIInterface {
 	private String _lipiDirectory;
 	private String _project;
-	private String _recognizer;
 	
 	static
 	{
@@ -20,18 +19,17 @@ public class LipiTKJNIInterface {
 	//  Initializes the interface with a directory to look for projects in
 	//  	the name of the project to use for recognition, and the name
 	//  	of the ShapeRecognizer to use.
-	public LipiTKJNIInterface(String lipiDirectory, String project, String recognizer) {
+	public LipiTKJNIInterface(String lipiDirectory, String project) {
 		_lipiDirectory = lipiDirectory;
-		_project = project;
-		_recognizer = recognizer;		
+		_project = project;	
 	}
 	
 	public void initialize() {
-			initializeNative(_lipiDirectory, _project, _recognizer);
+			initializeNative(_lipiDirectory, _project);
 	}
 	
 	// Initializes the LipiTKEngine in native code
-	private native void initializeNative(String lipiDirectory, String project, String recognizer);
+	private native void initializeNative(String lipiDirectory, String project);
 	
 	// Returns a list of results when recognizing the given list of strokes
 	public native LipitkResult[] recognizeNative(Stroke[] strokes);

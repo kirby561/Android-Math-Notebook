@@ -39,11 +39,11 @@ LTKLipiEngineInterface* gEngine;
 LTKShapeRecognizer* gShapeReco = NULL;
 
 extern "C" {
-	JNIEXPORT void JNICALL Java_LipiTKJNIInterface_initializeNative(JNIEnv *env, jobject this_object, jstring lipiDirectory, jstring project, jstring recognizer);
+	JNIEXPORT void JNICALL Java_LipiTKJNIInterface_initializeNative(JNIEnv *env, jobject this_object, jstring lipiDirectory, jstring project);
 	JNIEXPORT jobjectArray JNICALL Java_LipiTKJNIInterface_recognizeNative(JNIEnv *env, jobject this_object, jobject strokeobj);
 }
 
-JNIEXPORT void JNICALL Java_LipiTKJNIInterface_initializeNative(JNIEnv *env, jobject this_object, jstring lipiDirectory, jstring project, jstring recognizer) {
+JNIEXPORT void JNICALL Java_LipiTKJNIInterface_initializeNative(JNIEnv *env, jobject this_object, jstring lipiDirectory, jstring project) {
 	int result;
 	char* lipitkLocation = (char*)env->GetStringUTFChars(lipiDirectory, NULL); // ?? Need to release this
 
