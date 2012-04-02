@@ -45,12 +45,15 @@ extern "C" {
 
 JNIEXPORT void JNICALL Java_rcos_main_recognition_LipiTKJNIInterface_initializeNative(JNIEnv *env, jobject this_object, jstring lipiDirectory, jstring project) {
 	int result;
+	LOGD(LOG_JNI, "Getting Lipi Location");
 	char* lipitkLocation = (char*)env->GetStringUTFChars(lipiDirectory, NULL); // ?? Need to release this
 
+	LOGD(LOG_JNI, "Creating Engine");
 	// Load the engine
 	LTKLipiEngineInterface* gEngine = createLTKLipiEngine();
 	gEngine->setLipiRootPath(lipitkLocation);
 
+	LOGD(LOG_JNI, "Initializing Engine");
 	// Initialize the engine
 	result = gEngine->initializeLipiEngine();
 	if(result != SUCCESS) {
@@ -58,6 +61,7 @@ JNIEXPORT void JNICALL Java_rcos_main_recognition_LipiTKJNIInterface_initializeN
 		return; // Possibly should delete some stuff before returning
 	}
 
+	LOGD(LOG_JNI, "Loading Shape Recognizer");
 	// Load the shape recognizer
 	std::string projectStr = std::string((char*)env->GetStringUTFChars(project, NULL));
 	gEngine->createShapeRecognizer(projectStr, &gShapeReco);
@@ -66,6 +70,7 @@ JNIEXPORT void JNICALL Java_rcos_main_recognition_LipiTKJNIInterface_initializeN
 		return; // Possibly should delete some stuff before returning
 	}
 
+	LOGD(LOG_JNI, "Loading Model Data");
 	// Load the model data for the shape recognizer
 	result = gShapeReco->loadModelData();
 	if(result != SUCCESS) {

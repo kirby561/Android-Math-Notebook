@@ -1,5 +1,6 @@
 package rcos.main;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import rcos.main.recognition.LipiTKJNIInterface;
@@ -16,6 +17,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera.Size;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
@@ -87,7 +89,11 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		setFocusable(true);
 		
 		// Initialize lipitk
-		_lipitkInterface = new LipiTKJNIInterface("/sdcard/Android/data/rcos.main", "alphanumeric");
+		Context context = getContext();
+		File externalFileDir = context.getExternalFilesDir(null);
+		String path = externalFileDir.getPath();
+		Log.d("JNI", "Path: " + path);
+		_lipitkInterface = new LipiTKJNIInterface(path, "alphanumeric");
 		_lipitkInterface.initialize();
 	}
 
