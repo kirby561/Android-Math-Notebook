@@ -51,7 +51,7 @@
    whose source files include this file see LIPIENGINE_API functions as being 
    imported from a DLL, wheras this DLL sees symbols defined with this macro 
    as being exported.
-*/
+
 
 #ifdef _WIN32
 #ifdef LIPIENGINE_EXPORTS
@@ -62,6 +62,8 @@
 #else
 #define LIPIENGINE_API
 #endif // #ifdef _WIN32
+*/
+#define LIPIENGINE_API
 
 extern "C" LIPIENGINE_API LTKLipiEngineInterface* createLTKLipiEngine();
 

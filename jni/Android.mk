@@ -92,6 +92,8 @@ LOCAL_SRC_FILES := util/logger/LTKLogger.cpp \
 		   reco/shaperec/nn/NN.cpp \
 		   reco/shaperec/nn/NNAdapt.cpp \
 		   reco/shaperec/nn/NNShapeRecognizer.cpp
+
+include $(BUILD_SHARED_LIBRARY)
 		   
 #######################################
 ##        Application Link           ##
@@ -101,5 +103,6 @@ include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
 LOCAL_MODULE    := jnilink
 LOCAL_SRC_FILES := LipiTKJNIInterface.cpp
+LOCAL_SHARED_LIBRARIES := lipitk
 
 include $(BUILD_SHARED_LIBRARY)
