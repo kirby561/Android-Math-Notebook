@@ -2,6 +2,7 @@ package rcos.main;
 
 import java.util.ArrayList;
 
+import rcos.main.recognition.LipiTKJNIInterface;
 import rcos.main.recognition.PointMath;
 
 import android.content.Context;
@@ -34,6 +35,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	private Matrix _viewTransform = new Matrix();
 	private Matrix _invViewTransform = new Matrix();
 	private int _mode;
+	LipiTKJNIInterface _lipitkInterface;
 	
 	// ?? Debugging
 	private String DebugString = "";
@@ -83,6 +85,10 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		// Register for surface callbacks
 		getHolder().addCallback(this);
 		setFocusable(true);
+		
+		// Initialize lipitk
+		_lipitkInterface = new LipiTKJNIInterface("/sdcard/Android/data/rcos.main", "alphanumeric");
+		_lipitkInterface.initialize();
 	}
 
 	public NotesCanvas(Context context) {
