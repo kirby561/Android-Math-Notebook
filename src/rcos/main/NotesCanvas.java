@@ -1,7 +1,9 @@
 package rcos.main;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import rcos.main.recognition.LipiTKJNIInterface;
 import rcos.main.recognition.PointMath;
 
 import android.content.Context;
@@ -15,6 +17,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.hardware.Camera.Size;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
@@ -34,6 +37,10 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	private Matrix _viewTransform = new Matrix();
 	private Matrix _invViewTransform = new Matrix();
 	private int _mode;
+	LipiTKJNIInterface _lipitkInterface;
+	
+	// ?? Debugging
+	private String DebugString = "";
 
 	// Vars for touch events
 	private float _origDistance;
@@ -80,6 +87,14 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		// Register for surface callbacks
 		getHolder().addCallback(this);
 		setFocusable(true);
+		
+		// Initialize lipitk
+		Context context = getContext();
+		File externalFileDir = context.getExternalFilesDir(null);
+		String path = externalFileDir.getPath();
+		Log.d("JNI", "Path: " + path);
+		_lipitkInterface = new LipiTKJNIInterface(path, "alphanumeric");
+		_lipitkInterface.initialize();
 	}
 
 	public NotesCanvas(Context context) {
@@ -252,7 +267,6 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 				// to see if we should start panning
 				//float pressure = event.getPressure();
 				float pressure = event.getSize();
-				Log.d("SIZE", "Size = " + pressure);
 				if (pressure > TranslationPressureThreshold) {
 					_gestureState = Panning;
 					_lastSpot = p;
@@ -278,8 +292,8 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 				// their finger has changed since the start and
 				// cancel the current stroke/start panning if it is
 				// above the threshold.
-				float pressure = event.getPressure();
-
+				//float pressure = event.getPressure();
+				float pressure = event.getSize();
 				if (_gestureState == Drawing && pressure > TranslationPressureThreshold) {
 					float x = event.getX();
 					float y = event.getY();
@@ -488,6 +502,11 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
 			if (_gestureState == Drawing)
 				drawStroke(canvas, _currentStroke, boundingBox);
+			
+			// ?? Debugging
+			//Paint DebugPaint = new Paint();
+			//DebugPaint.setColor(Color.GREEN);
+			//canvas.drawText(DebugString, 100, 100, DebugPaint);
 		}
 	}
 

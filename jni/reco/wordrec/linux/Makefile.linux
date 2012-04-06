@@ -1,0 +1,66 @@
+include $(LIPI_ROOT)/global.mk
+SUBDIRS= common boxfld
+#all :	common preprocessing boxfld 
+.PHONY : all common preprocessing boxfld 
+
+all:
+	$(ECHO) Making ...
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	$(ECHO) "Making  $($subdir) directory... "; \
+	($(CHDIR) $(LIPITK_WORDREC)/$$subdir/$(LINUX_LOCATION) && $(MAKE) -f Makefile.$(OS) all) \
+	done;
+boxfld :utillib src-common shapereccommon wordreccommon
+	($(CHDIR) $@; $(MAKE) -f Makefile.$(OS) all)
+
+common :
+	($(CHDIR) $(LIPITK_WORDREC_COMMON)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) all)
+
+preprocessing :
+	($(CHDIR) $@; $(MAKE) -f Makefile.$(OS) all)
+
+shapereccommon:
+	($(CHDIR) $(LIPITK_SRC)/reco; $(MAKE) -f Makefile.$(OS) $@)
+
+wordreccommon:
+	($(CHDIR) $(LIPITK_SRC)/reco; $(MAKE) -f Makefile.$(OS) $@)
+
+utillib:
+	($(CHDIR) $(LIPITK_SRC)/util/lib; $(MAKE) -f Makefile.$(OS) all)
+
+utils:
+	($(CHDIR) ../; $(MAKE) -f Makefile.$(OS) $@)
+
+src-common:
+	($(CHDIR) ../; $(MAKE) -f Makefile.$(OS) common)
+
+clean-common:
+	($(CHDIR) $(LIPITK_WORDREC_COMMON)/$(LINUX_LOCATION); $(MAKE) -f Makefile.$(OS) clean)
+
+clean-preprocessing:
+	($(CHDIR) preprocessing; $(MAKE) -f Makefile.$(OS) clean)
+
+clean-boxfld: clean-shapereccommon clean-wordreccommon clean-src-common clean-utillib
+	($(CHDIR) boxfld; $(MAKE) -f Makefile.$(OS) clean)
+
+clean-shapereccommon:
+	($(CHDIR) $(LIPITK_SRC)/reco; $(MAKE) -f Makefile.$(OS) $@)
+
+clean-wordreccommon:
+	($(CHDIR) $(LIPITK_SRC)/reco; $(MAKE) -f Makefile.$(OS) $@)
+
+clean-utillib:
+	($(CHDIR) $(LIPITK_SRC)/util/lib; $(MAKE) -f Makefile.$(OS) clean)
+	
+clean-src-common:
+	($(CHDIR) ../; $(MAKE) -f Makefile.$(OS) clean-common)
+
+clean-utils:
+	($(CHDIR) ../; $(MAKE) -f Makefile.$(OS) $@)
+
+clean:
+	@echo Making clean.
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	echo "Making clean $$subdir"; \
+	($(CHDIR) $(LIPITK_WORDREC)/$$subdir/$(LINUX_LOCATION) && $(MAKE) -f Makefile.$(OS) clean) \
+	done;
+
