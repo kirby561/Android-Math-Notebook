@@ -43,6 +43,7 @@
 
 #include "LTKInc.h"
 #include "LTKLoggerInterface.h"
+#include "AndroidLogger.h"
 
 /**
 * @ingroup util
@@ -60,7 +61,7 @@ private:
 
 	 string m_logFileName;		//	name of the log file
 
-	 ofstream m_logFile;		//	file pointer to the log file
+	 AndroidLogger m_logFile;		//	file pointer to the log file
 
 	 ofstream m_ofstream;		//  used to ignore messages with priority lower than defined by application
 

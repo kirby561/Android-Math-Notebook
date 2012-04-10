@@ -59,6 +59,13 @@
 #include "LTKOSUtil.h"
 #include "LTKLoggerUtil.h"
 
+// Allow logging support
+#include <android/log.h>
+
+#define LOGD(LOG_TAG, ...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
+#define LOGV(LOG_TAG, ...) __android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, __VA_ARGS__)
+#define LOGE(LOG_TAG, ...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
+
 extern int unloadAllModules();
 extern int deleteModule(void* RecoHandle);
 extern void addModule(void* RecoHandle, void* handle);
@@ -118,7 +125,7 @@ LTKLipiEngineModule::~LTKLipiEngineModule()
 int LTKLipiEngineModule::initializeLipiEngine()
 {
 	//Log messages after call to configureLogger()	
-	
+	LOGD("LIPI INIT","11111");
 	string temp;
 	int errorCode;
 	
@@ -129,30 +136,34 @@ int LTKLipiEngineModule::initializeLipiEngine()
 
 	temp = m_strLipiRootPath + SEPARATOR + "projects" + SEPARATOR +
 		   LIPIENGINE_CFG_STRING;
-
+	LOGD("LIPI INIT","%s",temp.c_str());
 	//Read the logical name mapping file from lipiengine.cfg file;
 	try
 	{
-	    m_LipiEngineConfigEntries = new LTKConfigFileReader(temp);	
-		
+		LOGD("LIPI INIT","222222222222");
+		m_LipiEngineConfigEntries = new LTKConfigFileReader(temp);
+
 	}
 	catch(LTKException e)
 	{
 		// display warning to the user and continue with default values
 		cout << " Could not open file : " << temp << endl <<
 		        "proceeding with defaults" << endl;
-	}
 
+	}
+	LOGD("LIPI INIT","333333");
     errorCode = configureLogger();	// Configure the logger
-	
+    LOGD("LIPI INIT","44444444");
 	if(errorCode !=SUCCESS)
 	{
 		LTKReturnError(errorCode);
+		LOGE("LIPI INIT","error LTKLipiEngineModule::initializeLipiEngine()");
 	}
 	else
 	{
 		LOG(LTKLogger::LTK_LOGLEVEL_INFO)<<
 		"LTKLipiEngineModule::initializeLipiEngine()"<<endl;
+		LOGD("LIPI INIT","LTKLipiEngineModule::initializeLipiEngine()");
 	}
 
 	return SUCCESS;
