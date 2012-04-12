@@ -134,8 +134,7 @@ int LTKLipiEngineModule::initializeLipiEngine()
 		LTKReturnError(ELIPI_ROOT_PATH_NOT_SET);	// PATH not set
 	}
 
-	temp = m_strLipiRootPath + SEPARATOR + "projects" + SEPARATOR +
-		   LIPIENGINE_CFG_STRING;
+	temp = m_strLipiRootPath + SEPARATOR + "projects" + SEPARATOR + LIPIENGINE_CFG_STRING;
 	LOGD("LIPI INIT","%s",temp.c_str());
 	//Read the logical name mapping file from lipiengine.cfg file;
 	try
@@ -161,9 +160,9 @@ int LTKLipiEngineModule::initializeLipiEngine()
 	}
 	else
 	{
-		LOG(LTKLogger::LTK_LOGLEVEL_INFO)<<
-		"LTKLipiEngineModule::initializeLipiEngine()"<<endl;
-		LOGD("LIPI INIT","LTKLipiEngineModule::initializeLipiEngine()");
+		LOG(LTKLogger::LTK_LOGLEVEL_INFO)<<	"LTKLipiEngineModule::initializeLipiEngine() \n";
+
+		//LOGD("LIPI INIT","LTKLipiEngineModule::initializeLipiEngine()");
 	}
 
 	return SUCCESS;
