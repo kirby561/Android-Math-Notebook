@@ -47,6 +47,12 @@
 #include <stdio.h>
 #include <sys/utsname.h>
 
+// Allow logging support
+#include <android/log.h>
+
+#define LOGD(LOG_TAG, ...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
+#define LOGV(LOG_TAG, ...) __android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, __VA_ARGS__)
+#define LOGE(LOG_TAG, ...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
 /************************************************************************
  * AUTHOR		: Nidhi Sharma
@@ -354,8 +360,12 @@ void* LTKLinuxUtil::getLibraryHandle(const string& libName)
     libHandle = dlopen(libNameLinux.c_str(), RTLD_LAZY);
     
 	if(libHandle == NULL)
-        cout << "Error opening " << libNameLinux.c_str() << " : " << dlerror() << endl;
-
+	{
+		LOGD("LTKLinuxUtil", "Error opening");
+		LOGD("LTKLinuxUtil", libNameLinux.c_str());
+		LOGD("LTKLinuxUtil", dlerror());
+		cout << "Error opening " << libNameLinux.c_str() << " : " << dlerror() << endl;
+	}
     return libHandle;
 }
 
@@ -374,5 +384,10 @@ void* LTKLinuxUtil::getLibraryHandle(const string& libName)
 
 string LTKLinuxUtil::getEnvVariable(const string& envVariableName)
 {
+	LOGD("getEnvVariable",envVariableName.c_str());
+	//if(envVariableName.compare("LIPI_ROOT"))
+	//{
+		return "/mnt/sdcard/Android/data/rcos.main/files";
+	//}
 	return getenv(envVariableName.c_str());
 }

@@ -47,6 +47,7 @@
 #include "LTKMacros.h"
 #include "LTKErrors.h"
 #include "LTKErrorsList.h"
+#include "AndroidLogger.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -58,7 +59,7 @@ FN_PTR_LOGMESSAGE LTKLoggerUtil::module_logMessage = NULL;
 FN_PTR_STARTLOG LTKLoggerUtil::module_startLogger = NULL;
 FN_PTR_GETINSTANCE LTKLoggerUtil::module_getInstanceLogger = NULL;
 FN_PTR_DESTROYINSTANCE LTKLoggerUtil::module_destroyLogger = NULL;
-ofstream LTKLoggerUtil::m_emptyStream;
+AndroidLogger LTKLoggerUtil::m_emptyStream;
 
 /****************************************************************************
 * AUTHOR		: Nidhi Sharma
@@ -261,6 +262,11 @@ int LTKLoggerUtil::getAddressLoggerFunctions()
 
     //start log
     
+
+
+
+
+
     if (module_startLogger == NULL )
     {
         returnVal = m_ptrOSUtil->getFunctionAddress(m_libHandleLogger,
@@ -315,35 +321,41 @@ int LTKLoggerUtil::getAddressLoggerFunctions()
 *****************************************************************************/
 
 
-ostream& LTKLoggerUtil::logMessage(LTKLogger::EDebugLevel logLevel, string inStr, int lineNumber)
+AndroidLogger& LTKLoggerUtil::logMessage(LTKLogger::EDebugLevel logLevel, string inStr, int lineNumber)
 {
-	m_ptrOSUtil = LTKOSUtilFactory::getInstance();
-
-	if (m_libHandleLogger == NULL)
-	{
-		m_libHandleLogger = m_ptrOSUtil->getLibraryHandle(LOGGER_MODULE_STR);
-
-		if (m_libHandleLogger == NULL)
-		{
-			delete m_ptrOSUtil;
-			return m_emptyStream;
-		}
-	}
 
 
-	// get function addresses
-    if ( module_startLogger == NULL ||
-        module_logMessage == NULL )
-    {
-        int returnVal = getAddressLoggerFunctions();
 
-        if(returnVal != SUCCESS)
-    	{
-			delete m_ptrOSUtil;
-    	    return m_emptyStream;
-    	}
-    }
+//	m_ptrOSUtil = LTKOSUtilFactory::getInstance();
+//
+//	if (m_libHandleLogger == NULL)
+//	{
+//		m_libHandleLogger = m_ptrOSUtil->getLibraryHandle(LOGGER_MODULE_STR);
+//
+//		if (m_libHandleLogger == NULL)
+//		{
+//			delete m_ptrOSUtil;
+//			return m_emptyStream;
+//		}
+//	}
+//
+//
+//	// get function addresses
+//    if ( module_startLogger == NULL ||
+//        module_logMessage == NULL )
+//    {
+//        int returnVal = getAddressLoggerFunctions();
+//
+//        if(returnVal != SUCCESS)
+//    	{
+//			delete m_ptrOSUtil;
+//    	    return m_emptyStream;
+//    	}
+//    }
+//
+//	delete m_ptrOSUtil;
 
-	delete m_ptrOSUtil;
-    return module_logMessage(logLevel, inStr, lineNumber);
+	LTKLoggerInterface* logger = LTKLogger::getInstance();
+
+	return (*logger)(logLevel, inStr, lineNumber);
 }

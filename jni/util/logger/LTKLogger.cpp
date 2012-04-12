@@ -99,7 +99,7 @@ LTKLogger::~LTKLogger()
 * Author			Date				Description of change
 *************************************************************************************/
 
-ostream& LTKLogger::operator()(const EDebugLevel& msgDebugLevel, 
+AndroidLogger& LTKLogger::operator()(const EDebugLevel& msgDebugLevel,
                                const string& fileName, 
                                int lineNumber)
 {

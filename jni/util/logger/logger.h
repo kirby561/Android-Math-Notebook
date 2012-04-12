@@ -50,6 +50,8 @@
 #include <windows.h>
 #endif
 
+#include "AndroidLogger.h"
+
 
 #ifdef _WIN32
 #ifdef LOGGER_EXPORTS
@@ -82,7 +84,7 @@ extern "C" LOGGER_API void startLogger();
 
 extern "C" LOGGER_API void stopLogger();
 
-extern "C" LOGGER_API ostream& logMessage(LTKLogger::EDebugLevel, 
+extern "C" LOGGER_API AndroidLogger& logMessage(LTKLogger::EDebugLevel,
                                              const string& fileName,
                                              int lineNumber);
 
