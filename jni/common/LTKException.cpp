@@ -44,7 +44,7 @@
 #include "LTKException.h"
 #include "LTKErrors.h"
 #include "LTKMacros.h"
-
+#include "AndroidLogger.h"
 /******************************************************************************
 * AUTHOR		: Balaji R.
 * DATE			: 23-DEC-2004
@@ -82,11 +82,11 @@ LTKException::LTKException():
 LTKException::LTKException(int errorCode) : 
 	m_errorCode(errorCode) 
 {
-	/*LOG( LTKLogger::LTK_LOGLEVEL_DEBUG) << 
-        "Enter: LTKException::LTKException(int)" << endl;
-
-	LOG( LTKLogger::LTK_LOGLEVEL_DEBUG) << 
-        "Exit: LTKException::LTKException(int)" << endl;*/
+//	LOG( LTKLogger::LTK_LOGLEVEL_DEBUG) <<
+//        "Enter: LTKException::LTKException(int)" << endl;
+//
+//	LOG( LTKLogger::LTK_LOGLEVEL_DEBUG) <<
+//        "Exit: LTKException::LTKException(int)" << endl;
 }
 
 /******************************************************************************

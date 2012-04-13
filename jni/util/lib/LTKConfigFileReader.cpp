@@ -72,6 +72,7 @@ m_configFilePath(configFilePath)
 		 " Entering: LTKConfigFileReader::LTKConfigFileReader()" << endl;
 
 	// Read the config file into stringStringMap
+	//adb ppush lipi at this point :(
 	int errorCode = getMap();
 
 	if (errorCode != SUCCESS )

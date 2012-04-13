@@ -42,7 +42,30 @@ public:
 		return *this;
 	}
 
+
+	AndroidLogger& operator<< (float val) {
+		std::ostringstream oss;
+		oss << val;
+		buffer += oss.str();
+		return *this;
+	}
+
+	AndroidLogger& operator<< (void* val) {
+		//WHAT DO?
+		buffer+="Trying to print a void*";
+		LOGV(LOG_ANDROIDLOGGER_TAG, "%s", buffer.c_str());
+		buffer = "";
+		return *this;
+	}
+
 	AndroidLogger& operator<< (const char* val) {
+		std::ostringstream oss;
+		oss << val;
+		buffer += oss.str();
+		return *this;
+	}
+
+	AndroidLogger& operator<< (double val) {
 		std::ostringstream oss;
 		oss << val;
 		buffer += oss.str();
@@ -61,8 +84,8 @@ public:
 	}
 
 	void flush() {
-		LOGV(LOG_ANDROIDLOGGER_TAG, "%s", buffer.c_str());
-		buffer = "";
+		//LOGV(LOG_ANDROIDLOGGER_TAG, "%s", buffer.c_str());
+		//buffer = "";
 	}
 
 };

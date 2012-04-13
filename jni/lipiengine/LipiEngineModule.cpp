@@ -153,6 +153,8 @@ int LTKLipiEngineModule::initializeLipiEngine()
 	LOGD("LIPI INIT","333333");
     errorCode = configureLogger();	// Configure the logger
     LOGD("LIPI INIT","44444444");
+    LOG(LTKLogger::LTK_LOGLEVEL_INFO)<<	"TEST LINE" << "electric slide";
+
 	if(errorCode !=SUCCESS)
 	{
 		LTKReturnError(errorCode);
@@ -160,7 +162,8 @@ int LTKLipiEngineModule::initializeLipiEngine()
 	}
 	else
 	{
-		LOG(LTKLogger::LTK_LOGLEVEL_INFO)<<	"LTKLipiEngineModule::initializeLipiEngine() \n";
+		LOG(LTKLogger::LTK_LOGLEVEL_INFO)<<	"LTKLipiEngineModule::initializeLipiEngine()" << endl;
+		LOG(LTKLogger::LTK_LOGLEVEL_INFO)<<	"LTKLipiEngineModule::initializeLipiEngine()" << endl;
 
 		//LOGD("LIPI INIT","LTKLipiEngineModule::initializeLipiEngine()");
 	}
@@ -327,6 +330,7 @@ int LTKLipiEngineModule::createShapeRecognizer(string &strLogicalProjectName, LT
 	int errorCode;
 	LOG(LTKLogger::LTK_LOGLEVEL_INFO)<<
 		"Entering: LTKLipiEngineModule::createShapeRecognizer()"<<endl;
+	//LOG(LTKLogger::LTK_LOGLEVEL_INFO) << "HEY";
 
 	if(strLogicalProjectName.empty())
 	{		

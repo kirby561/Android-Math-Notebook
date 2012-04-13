@@ -130,7 +130,7 @@ AndroidLogger& LTKLogger::operator()(const EDebugLevel& msgDebugLevel,
 											break;
 		}
         
-		m_logFile.flush();
+		//m_logFile.flush();
 
         return m_logFile;
 	}
