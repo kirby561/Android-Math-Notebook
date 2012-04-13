@@ -44,8 +44,11 @@
 #include "LTKErrorsList.h"
 #include "LTKOSUtil.h"
 #include "LTKOSUtilFactory.h"
+#include "AndroidLogger.h"
 
 LTKLoggerInterface* LTKLogger::loggerInstance = NULL;
+
+
 
 /**********************************************************************************
 * AUTHOR		: Balaji R.
@@ -96,7 +99,7 @@ LTKLogger::~LTKLogger()
 * Author			Date				Description of change
 *************************************************************************************/
 
-ostream& LTKLogger::operator()(const EDebugLevel& msgDebugLevel, 
+AndroidLogger& LTKLogger::operator()(const EDebugLevel& msgDebugLevel,
                                const string& fileName, 
                                int lineNumber)
 {
@@ -127,7 +130,7 @@ ostream& LTKLogger::operator()(const EDebugLevel& msgDebugLevel,
 											break;
 		}
         
-		m_logFile.flush();
+		//m_logFile.flush();
 
         return m_logFile;
 	}
@@ -295,14 +298,14 @@ int LTKLogger::startLog(bool isTimeStamped)
 	if(m_logStatus == INACTIVE)
 	{
 		m_isTimeStamped = isTimeStamped;
-
+		/*
 		if(m_logFileName != "")
 		{
 			m_logFile.close();
 
 			m_logFile.clear();
 
-			m_logFile.open(m_logFileName.c_str(), ios::app);
+			m_logFile.open(m_logFileName.c_str(), ios::app)
 		}
 
 		if(m_logFileName == "" || !m_logFile)
@@ -317,7 +320,7 @@ int LTKLogger::startLog(bool isTimeStamped)
 
 			m_logFile.open(m_logFileName.c_str(), ios::app);
 		}
-
+		*/
 		m_logStatus = ACTIVE;
 	}
 
@@ -390,7 +393,7 @@ int LTKLogger::stopLog()
 
 	if(m_logFileName != "")
 	{
-		m_logFile.close();
+		//m_logFile.close();
 		m_logStatus = INACTIVE;
 		return 0;
 	}

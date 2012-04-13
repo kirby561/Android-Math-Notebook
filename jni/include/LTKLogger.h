@@ -43,6 +43,7 @@
 
 #include "LTKInc.h"
 #include "LTKLoggerInterface.h"
+#include "AndroidLogger.h"
 
 /**
 * @ingroup util
@@ -60,9 +61,9 @@ private:
 
 	 string m_logFileName;		//	name of the log file
 
-	 ofstream m_logFile;		//	file pointer to the log file
+	 AndroidLogger m_logFile;		//	file pointer to the log file
 
-	 ofstream m_ofstream;		//  used to ignore messages with priority lower than defined by application
+	 AndroidLogger m_ofstream;		//  used to ignore messages with priority lower than defined by application
 
 	 ELogStatus m_logStatus;	//	status of logging - active or inactive
 
@@ -118,7 +119,7 @@ public:
 	 * @return reference to an output stream object
 	 */
 	
-	ostream& operator()(const EDebugLevel& debugLevel, const string& fileName, int lineNumber = 0);
+	AndroidLogger& operator()(const EDebugLevel& debugLevel, const string& fileName, int lineNumber = 0);
 	
 	// @}
 	

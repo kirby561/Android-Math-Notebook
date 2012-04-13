@@ -44,6 +44,8 @@
 
 #include "LTKInc.h"
 #include "LTKLogger.h"
+#include "AndroidLogger.h"
+
 class LTKOSUtil;
 
 typedef LTKLoggerInterface* (*FN_PTR_GETINSTANCE)();
@@ -51,7 +53,7 @@ typedef void (*FN_PTR_DESTROYINSTANCE)();
 typedef void (*FN_PTR_STARTLOG)();
 typedef void (*FN_PTR_SETLOGFILENAME)(const string&);
 typedef void (*FN_PTR_SETLOGLEVEL)(LTKLogger::EDebugLevel);
-typedef ostream& (*FN_PTR_LOGMESSAGE)(int, const string& , int );  
+typedef AndroidLogger& (*FN_PTR_LOGMESSAGE)(int, const string& , int );
 
 #define LOG(EDebugLevel) LTKLoggerUtil::logMessage(EDebugLevel, __FILE__, __LINE__)
 
@@ -105,7 +107,7 @@ public:
 
     static int getAddressLoggerFunctions();
 
-    static ostream& logMessage(LTKLogger::EDebugLevel logLevel, string, int);
+    static AndroidLogger& logMessage(LTKLogger::EDebugLevel logLevel, string, int);
 
     static ofstream m_emptyStream;
 

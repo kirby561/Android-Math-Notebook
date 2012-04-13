@@ -47,6 +47,7 @@
 #include "LTKMacros.h"
 #include "LTKErrors.h"
 #include "LTKErrorsList.h"
+#include "AndroidLogger.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -58,7 +59,7 @@ FN_PTR_LOGMESSAGE LTKLoggerUtil::module_logMessage = NULL;
 FN_PTR_STARTLOG LTKLoggerUtil::module_startLogger = NULL;
 FN_PTR_GETINSTANCE LTKLoggerUtil::module_getInstanceLogger = NULL;
 FN_PTR_DESTROYINSTANCE LTKLoggerUtil::module_destroyLogger = NULL;
-ofstream LTKLoggerUtil::m_emptyStream;
+AndroidLogger LTKLoggerUtil::m_emptyStream;
 
 /****************************************************************************
 * AUTHOR		: Nidhi Sharma
@@ -90,58 +91,58 @@ LTKLoggerUtil::LTKLoggerUtil(){}
 
 int LTKLoggerUtil::createLogger(const string& lipiRoot)
 {
-    void* functionHandle = NULL; 
-	m_ptrOSUtil = LTKOSUtilFactory::getInstance();
-
-    int iErrorCode = m_ptrOSUtil->loadSharedLib(lipiRoot, 
-                                                LOGGER_MODULE_STR, 
-                                                &m_libHandleLogger);
-
-	
-    if(iErrorCode != SUCCESS)
-    {
-		delete m_ptrOSUtil;
-        return iErrorCode;
-    }
-
-    // Create logger instance
-    if (module_getInstanceLogger == NULL)
-    {
-        iErrorCode = m_ptrOSUtil->getFunctionAddress(m_libHandleLogger,
-                                                     "getLoggerInstance", 
-                                                     &functionHandle);
-        if(iErrorCode != SUCCESS)
-    	{
-			delete m_ptrOSUtil;
-    	    return iErrorCode;
-    	}
-
-        module_getInstanceLogger = (FN_PTR_GETINSTANCE)functionHandle;
-
-    	functionHandle = NULL;
-    }
-
-    module_getInstanceLogger();
-
+//    void* functionHandle = NULL;
+//	m_ptrOSUtil = LTKOSUtilFactory::getInstance();
+//
+//    int iErrorCode = m_ptrOSUtil->loadSharedLib(lipiRoot,
+//                                                LOGGER_MODULE_STR,
+//                                                &m_libHandleLogger);
+//
+//
+//    if(iErrorCode != SUCCESS)
+//    {
+//		delete m_ptrOSUtil;
+//        return iErrorCode;
+//    }
+//
+//    // Create logger instance
+//    if (module_getInstanceLogger == NULL)
+//    {
+//        iErrorCode = m_ptrOSUtil->getFunctionAddress(m_libHandleLogger,
+//                                                     "getLoggerInstance",
+//                                                     &functionHandle);
+//        if(iErrorCode != SUCCESS)
+//    	{
+//			delete m_ptrOSUtil;
+//    	    return iErrorCode;
+//    	}
+//
+//        module_getInstanceLogger = (FN_PTR_GETINSTANCE)functionHandle;
+//
+//    	functionHandle = NULL;
+//    }
+//
+//    module_getInstanceLogger();
     // map destoylogger function
-    if (module_destroyLogger == NULL)
-    {
-        iErrorCode = m_ptrOSUtil->getFunctionAddress(m_libHandleLogger,
-                                                     "destroyLogger", 
-                                                     &functionHandle);
-        if(iErrorCode != SUCCESS)
-    	{
-			delete m_ptrOSUtil;
-    	    return iErrorCode;
-    	}
-
-        module_destroyLogger = (FN_PTR_DESTROYINSTANCE)functionHandle;
-
-    	functionHandle = NULL;
-    }
-    
-	delete m_ptrOSUtil;
-    return iErrorCode;
+//    if (module_destroyLogger == NULL)
+//    {
+//        iErrorCode = m_ptrOSUtil->getFunctionAddress(m_libHandleLogger,
+//                                                     "destroyLogger",
+//                                                     &functionHandle);
+//        if(iErrorCode != SUCCESS)
+//    	{
+//			delete m_ptrOSUtil;
+//    	    return iErrorCode;
+//    	}
+//
+//        module_destroyLogger = (FN_PTR_DESTROYINSTANCE)functionHandle;
+//
+//    	functionHandle = NULL;
+//    }
+//
+//	delete m_ptrOSUtil;
+	LTKLoggerInterface* logger = LTKLogger::getInstance();
+    return SUCCESS;
     
 }
 
@@ -185,60 +186,10 @@ int LTKLoggerUtil::destroyLogger()
 *****************************************************************************/
 int LTKLoggerUtil::configureLogger(const string& logFile, LTKLogger::EDebugLevel logLevel)
 {
-     void* functionHandle = NULL; 
-     int returnVal = SUCCESS;
 
-     FN_PTR_SETLOGFILENAME module_setLogFileName = NULL;
-     FN_PTR_SETLOGLEVEL module_setLogLevel = NULL;
-
-    if (m_libHandleLogger == NULL )
-    {
-        LTKReturnError(ELOGGER_LIBRARY_NOT_LOADED);
-    }
-    
-    m_ptrOSUtil = LTKOSUtilFactory::getInstance();
-
-    if ( logFile.length() != 0 )
-    {
-        returnVal = m_ptrOSUtil->getFunctionAddress(m_libHandleLogger,
-                                                    "setLoggerFileName", 
-                                                    &functionHandle);
-
-        if(returnVal != SUCCESS)
-    	{
-    	    return returnVal;
-    	}
-
-        module_setLogFileName = (FN_PTR_SETLOGFILENAME)functionHandle;
-
-    	functionHandle = NULL;
-
-        module_setLogFileName(logFile);
-    	
-    }
-    else
-    {
-		LTKReturnError(EINVALID_LOG_FILENAME); 
-    }
-    
-    returnVal = m_ptrOSUtil->getFunctionAddress(m_libHandleLogger,
-                                                "setLoggerLevel", 
-                                                &functionHandle);
-
-    if(returnVal != SUCCESS)
-	{
-	    LTKReturnError(returnVal);
-	}
-
-    module_setLogLevel = (FN_PTR_SETLOGLEVEL)functionHandle;
-
-	functionHandle = NULL;
-
-    module_setLogLevel(logLevel);
-
-	delete m_ptrOSUtil;
-    return SUCCESS;
-    
+	LTKLoggerInterface* logger = LTKLogger::getInstance();
+	logger->setLogLevel(logLevel);
+	return SUCCESS;
 }
 
 
@@ -260,7 +211,8 @@ int LTKLoggerUtil::getAddressLoggerFunctions()
 
 
     //start log
-    
+
+
     if (module_startLogger == NULL )
     {
         returnVal = m_ptrOSUtil->getFunctionAddress(m_libHandleLogger,
@@ -315,35 +267,40 @@ int LTKLoggerUtil::getAddressLoggerFunctions()
 *****************************************************************************/
 
 
-ostream& LTKLoggerUtil::logMessage(LTKLogger::EDebugLevel logLevel, string inStr, int lineNumber)
+AndroidLogger& LTKLoggerUtil::logMessage(LTKLogger::EDebugLevel logLevel, string inStr, int lineNumber)
 {
-	m_ptrOSUtil = LTKOSUtilFactory::getInstance();
-
-	if (m_libHandleLogger == NULL)
-	{
-		m_libHandleLogger = m_ptrOSUtil->getLibraryHandle(LOGGER_MODULE_STR);
-
-		if (m_libHandleLogger == NULL)
-		{
-			delete m_ptrOSUtil;
-			return m_emptyStream;
-		}
-	}
 
 
-	// get function addresses
-    if ( module_startLogger == NULL ||
-        module_logMessage == NULL )
-    {
-        int returnVal = getAddressLoggerFunctions();
 
-        if(returnVal != SUCCESS)
-    	{
-			delete m_ptrOSUtil;
-    	    return m_emptyStream;
-    	}
-    }
+//	m_ptrOSUtil = LTKOSUtilFactory::getInstance();
+//
+//	if (m_libHandleLogger == NULL)
+//	{
+//		m_libHandleLogger = m_ptrOSUtil->getLibraryHandle(LOGGER_MODULE_STR);
+//
+//		if (m_libHandleLogger == NULL)
+//		{
+//			delete m_ptrOSUtil;
+//			return m_emptyStream;
+//		}
+//	}
+//
+//
+//	// get function addresses
+//    if ( module_startLogger == NULL ||
+//        module_logMessage == NULL )
+//    {
+//        int returnVal = getAddressLoggerFunctions();
+//
+//        if(returnVal != SUCCESS)
+//    	{
+//			delete m_ptrOSUtil;
+//    	    return m_emptyStream;
+//    	}
+//    }
+//
+//	delete m_ptrOSUtil;
 
-	delete m_ptrOSUtil;
-    return module_logMessage(logLevel, inStr, lineNumber);
+	LTKLoggerInterface* logger = LTKLogger::getInstance();
+	return (*logger)(logLevel, inStr, lineNumber);
 }

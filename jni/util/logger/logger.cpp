@@ -224,7 +224,7 @@ void stopLogger()
 * CHANGE HISTROY
 * Author            Date                Description of change
 ***************************************************************************/
-ostream& logMessage(LTKLogger::EDebugLevel logLevel, const string& fileName,
+AndroidLogger& logMessage(LTKLogger::EDebugLevel logLevel, const string& fileName,
                        int lineNumber)
 {
     return (*ptrLog)(logLevel, fileName, lineNumber);

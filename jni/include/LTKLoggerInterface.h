@@ -30,7 +30,7 @@
 #ifndef __LTKLoggerINTERFACE_H_
 #define __LTKLoggerINTERFACE_H_
 
-#include <ostream>
+#include "AndroidLogger.h"
 
 using namespace std;
 
@@ -69,7 +69,7 @@ public:
 
 public:
 
-	virtual ostream& operator()(const EDebugLevel& debugLevel, const string &fileName, int lineNumber = 0) = 0;
+	virtual AndroidLogger& operator()(const EDebugLevel& debugLevel, const string &fileName, int lineNumber = 0) = 0;
 
 	virtual int setLogLevel(const EDebugLevel& debugLevel) = 0;
 
