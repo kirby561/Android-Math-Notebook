@@ -93,7 +93,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		File externalFileDir = context.getExternalFilesDir(null);
 		String path = externalFileDir.getPath();
 		Log.d("JNI", "Path: " + path);
-		_lipitkInterface = new LipiTKJNIInterface(path, "alphanumeric");
+		_lipitkInterface = new LipiTKJNIInterface(path, "SHAPEREC_ALPHANUM");
 		_lipitkInterface.initialize();
 	}
 
