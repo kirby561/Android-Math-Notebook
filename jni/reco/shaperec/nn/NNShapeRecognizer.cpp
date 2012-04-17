@@ -71,6 +71,8 @@
 #include "LTKStringUtil.h"
 #include "LTKDynamicTimeWarping.h"
 
+#include "preprocessing.h"
+
 /**********************************************************************************
  * AUTHOR		: Saravanan R.
  * DATE			: 23-Jan-2007
@@ -4231,76 +4233,81 @@ int NNShapeRecognizer::initializePreprocessor(const LTKControlInfo& controlInfo,
     LOG(LTKLogger::LTK_LOGLEVEL_DEBUG) << "Entering " <<
         "NNShapeRecognizer::initializePreprocessor()" << endl;
 
-    FN_PTR_CREATELTKLIPIPREPROCESSOR createLTKLipiPreProcessor = NULL;
-    int errorCode;
+//    FN_PTR_CREATELTKLIPIPREPROCESSOR createLTKLipiPreProcessor = NULL;
+//    int errorCode;
+//
+//    // Load the DLL with path=preprocDLLPath
+//    void* functionHandle = NULL;y
+//
+//    int returnVal = m_OSUtilPtr->loadSharedLib(controlInfo.lipiRoot, PREPROC, &m_libHandler);
+//
+//
+//	if(returnVal != SUCCESS)
+//    {
+//        LOG(LTKLogger::LTK_LOGLEVEL_ERR) << "Error: "<<  ELOAD_PREPROC_DLL << " " <<
+//            getErrorMessage(ELOAD_PREPROC_DLL) <<
+//            " NNShapeRecognizer::initializePreprocessor()" << endl;
+//        LTKReturnError(ELOAD_PREPROC_DLL);
+//    }
+//
+//    // Map createpreprocessor and deletePreprocessor functions
+//    returnVal = m_OSUtilPtr->getFunctionAddress(m_libHandler,
+//                                            CREATEPREPROCINST,
+//                                            &functionHandle);
+//    // Could not map the createLipiPreprocessor function from the DLL
+//	if(returnVal != SUCCESS)
+//    {
+//        //Unload the dll
+//        unloadPreprocessorDLL();
+//        LOG(LTKLogger::LTK_LOGLEVEL_ERR) << "Error: "<< EDLL_FUNC_ADDRESS_CREATE << " " <<
+//            getErrorMessage(EDLL_FUNC_ADDRESS_CREATE) <<
+//            " NNShapeRecognizer::initializePreprocessor()" << endl;
+//
+//        LTKReturnError(EDLL_FUNC_ADDRESS_CREATE);
+//    }
 
-    // Load the DLL with path=preprocDLLPath
-    void* functionHandle = NULL;
-
-    int returnVal = m_OSUtilPtr->loadSharedLib(controlInfo.lipiRoot, PREPROC, &m_libHandler);
-
-    
-	if(returnVal != SUCCESS)
-    {
-        LOG(LTKLogger::LTK_LOGLEVEL_ERR) << "Error: "<<  ELOAD_PREPROC_DLL << " " <<
-            getErrorMessage(ELOAD_PREPROC_DLL) <<
-            " NNShapeRecognizer::initializePreprocessor()" << endl;
-        LTKReturnError(ELOAD_PREPROC_DLL);
-    }
-
-    // Map createpreprocessor and deletePreprocessor functions
-    returnVal = m_OSUtilPtr->getFunctionAddress(m_libHandler, 
-                                            CREATEPREPROCINST, 
-                                            &functionHandle);
-    // Could not map the createLipiPreprocessor function from the DLL
-	if(returnVal != SUCCESS)
-    {
-        //Unload the dll
-        unloadPreprocessorDLL();
-        LOG(LTKLogger::LTK_LOGLEVEL_ERR) << "Error: "<< EDLL_FUNC_ADDRESS_CREATE << " " <<
-            getErrorMessage(EDLL_FUNC_ADDRESS_CREATE) <<
-            " NNShapeRecognizer::initializePreprocessor()" << endl;
-
-        LTKReturnError(EDLL_FUNC_ADDRESS_CREATE);
-    }
-
-    createLTKLipiPreProcessor = (FN_PTR_CREATELTKLIPIPREPROCESSOR)functionHandle;
-
-    functionHandle = NULL;
-
-    // Map createpreprocessor and deletePreprocessor functions
-    returnVal = m_OSUtilPtr->getFunctionAddress(m_libHandler, 
-                                            DESTROYPREPROCINST, 
-                                            &functionHandle);
-    // Could not map the createLipiPreprocessor function from the DLL
-	if(returnVal != SUCCESS)
-    {
-        //Unload the dll
-        unloadPreprocessorDLL();
-
-        LOG(LTKLogger::LTK_LOGLEVEL_ERR) << "Error: "<< EDLL_FUNC_ADDRESS_CREATE << " " <<
-            getErrorMessage(EDLL_FUNC_ADDRESS_CREATE) <<
-            " NNShapeRecognizer::initializePreprocessor()" << endl;
-        LTKReturnError(EDLL_FUNC_ADDRESS_CREATE);
-	}
-    
-    m_deleteLTKLipiPreProcessor = (FN_PTR_DELETELTKLIPIPREPROCESSOR)functionHandle;
-    
+    //createLTKLipiPreProcessor = (FN_PTR_CREATELTKLIPIPREPROCESSOR)functionHandle;
+//
+//    functionHandle = NULL;
+//
+//    // Map createpreprocessor and deletePreprocessor functions
+//    returnVal = m_OSUtilPtr->getFunctionAddress(m_libHandler,
+//                                            DESTROYPREPROCINST,
+//                                            &functionHandle);
+//    // Could not map the createLipiPreprocessor function from the DLL
+//	if(returnVal != SUCCESS)
+//    {
+//        //Unload the dll
+//        unloadPreprocessorDLL();
+//
+//        LOG(LTKLogger::LTK_LOGLEVEL_ERR) << "Error: "<< EDLL_FUNC_ADDRESS_CREATE << " " <<
+//            getErrorMessage(EDLL_FUNC_ADDRESS_CREATE) <<
+//            " NNShapeRecognizer::initializePreprocessor()" << endl;
+//        LTKReturnError(EDLL_FUNC_ADDRESS_CREATE);
+//	}
+//
+//    m_deleteLTKLipiPreProcessor = (FN_PTR_DELETELTKLIPIPREPROCESSOR)functionHandle;
+//
+//
     // Create preprocessor instance
-    errorCode = createLTKLipiPreProcessor(controlInfo, preprocInstance);
+    //createLTKLipiPreProcessor
 
-    if(errorCode!=SUCCESS)
-    {
-        LOG(LTKLogger::LTK_LOGLEVEL_ERR) << "Error: "<<  errorCode << " " <<
-            " NNShapeRecognizer::initializePreprocessor()" << endl;
-        LTKReturnError(errorCode);
-    }
+
+//    if(errorCode!=SUCCESS)
+//    {
+//        LOG(LTKLogger::LTK_LOGLEVEL_ERR) << "Error: "<<  errorCode << " " <<
+//            " NNShapeRecognizer::initializePreprocessor()" << endl;
+//        LTKReturnError(errorCode);
+//    }
+
+    createPreprocInst2(controlInfo,preprocInstance);
+    //*preprocInstance = new LTKPreprocessor(controlInfo);
 
     // Could not create a LTKLipiPreProcessor
     if(*preprocInstance == NULL)
     {
         // Unload the DLL
-        unloadPreprocessorDLL();
+        //unloadPreprocessorDLL();
 
         LOG(LTKLogger::LTK_LOGLEVEL_ERR) << "Error: "<< ECREATE_PREPROC << " " <<
             getErrorMessage(ECREATE_PREPROC) <<

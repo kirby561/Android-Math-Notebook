@@ -1,4 +1,0 @@
-Wed Feb 22 23:06:01 2012 LipiEngineModule.cpp(847): [Error] Error: Invalid or no value specified for project name for recognizerLTKLipiEngineModule::resolveLogicalNameToProjectProfile()
-Wed Feb 22 23:06:01 2012 LipiEngineModule.cpp(336): [Error] Error: Cannot map the logical name, no entries in lipiengine.cfgLTKLipiEngineModule::createShapeRecognizer()
-Wed Feb 22 23:06:11 2012 LipiEngineModule.cpp(847): [Error] Error: Invalid or no value specified for project name for recognizerLTKLipiEngineModule::resolveLogicalNameToProjectProfile()
-Wed Feb 22 23:06:11 2012 LipiEngineModule.cpp(336): [Error] Error: Cannot map the logical name, no entries in lipiengine.cfgLTKLipiEngineModule::createShapeRecognizer()

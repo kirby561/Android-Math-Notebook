@@ -45,6 +45,7 @@
 #include "LTKErrors.h"
 #include "LTKOSUtil.h"
 #include "LTKOSUtilFactory.h"
+#include "PointFloat.h"
 
 /*************************************************************************
 * AUTHOR		: Nidhi Sharma
@@ -134,41 +135,41 @@ int LTKShapeFeatureExtractorFactory::getFeatureExtractorInst(
                                  const LTKControlInfo& controlInfo,
                                  LTKShapeFeatureExtractor** outFeatureExtractor)
 {
-	FN_PTR_CREATE_SHAPE_FEATURE_EXTRACTOR createFeatureExtractorPtr;
-    void *functionHandle = NULL;
+//	FN_PTR_CREATE_SHAPE_FEATURE_EXTRACTOR createFeatureExtractorPtr;
+//    void *functionHandle = NULL;
+//
+//    LTKOSUtil* utilPtr = LTKOSUtilFactory::getInstance();
+//
+//    int returnVal = utilPtr->loadSharedLib(lipiRootPath, feName, m_libHandlerFE);
+//
+//
+//	if(returnVal != SUCCESS)
+//	{
+//	    LTKReturnError(ELOAD_FEATEXT_DLL);
+//	}
+//
+//    returnVal = utilPtr->getFunctionAddress(*m_libHandlerFE,
+//                                            CREATE_SHAPE_FEATURE_EXTRACTOR,
+//                                            &functionHandle);
+//
+//	if(returnVal != SUCCESS)
+//	{
+//	    utilPtr->unloadSharedLib(m_libHandlerFE);
+//        *m_libHandlerFE = NULL;
+//
+//		LTKReturnError(EDLL_FUNC_ADDRESS_CREATE_FEATEXT);
+//	}
 
-    LTKOSUtil* utilPtr = LTKOSUtilFactory::getInstance();
+    //createFeatureExtractorPtr = (FN_PTR_CREATE_SHAPE_FEATURE_EXTRACTOR)functionHandle;
 
-    int returnVal = utilPtr->loadSharedLib(lipiRootPath, feName, m_libHandlerFE);
-
-    
-	if(returnVal != SUCCESS)
-	{
-	    LTKReturnError(ELOAD_FEATEXT_DLL);
-	}
-
-    returnVal = utilPtr->getFunctionAddress(*m_libHandlerFE, 
-                                            CREATE_SHAPE_FEATURE_EXTRACTOR, 
-                                            &functionHandle);
-
-	if(returnVal != SUCCESS)
-	{
-	    utilPtr->unloadSharedLib(m_libHandlerFE);
-        *m_libHandlerFE = NULL;
-
-		LTKReturnError(EDLL_FUNC_ADDRESS_CREATE_FEATEXT);
-	}
-
-    createFeatureExtractorPtr = (FN_PTR_CREATE_SHAPE_FEATURE_EXTRACTOR)functionHandle;
-
-    int errorCode = createFeatureExtractorPtr(controlInfo, outFeatureExtractor);
+    int errorCode = createShapeFeatureExtractor(controlInfo, outFeatureExtractor);
 
     if (errorCode != SUCCESS)
     {
 		LTKReturnError(errorCode);
     }
 
-    delete utilPtr;
+    //delete utilPtr;
 	return SUCCESS;
 
 }

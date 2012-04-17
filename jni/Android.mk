@@ -20,9 +20,6 @@ LOCAL_CFLAGS = -fexceptions
 		   #reco/shaperec/featureextractor/l7/l7.cpp \
 		   #reco/shaperec/featureextractor/l7/L7ShapeFeatureExtractor.cpp \
 		   #reco/shaperec/featureextractor/l7/L7ShapeFeature.cpp \
-		   #reco/shaperec/featureextractor/pointfloat/PointFloatShapeFeatureExtractor.cpp \
-		   #reco/shaperec/featureextractor/pointfloat/PointFloatShapeFeature.cpp \
-		   #reco/shaperec/featureextractor/pointfloat/PointFloat.cpp \
 		   #reco/shaperec/featureextractor/npen/NPenShapeFeature.cpp \
 		   #reco/shaperec/featureextractor/npen/NPenShapeFeatureExtractor.cpp \
 		   #reco/shaperec/featureextractor/npen/NPen.cpp \
@@ -82,11 +79,16 @@ LOCAL_SRC_FILES := util/logger/LTKLogger.cpp \
 		   common/LTKTraceFormat.cpp \
 		   lipiengine/lipiengine.cpp \
 		   lipiengine/LipiEngineModule.cpp \
+   		   reco/shaperec/preprocessing/preprocessing.cpp \
+		   reco/shaperec/preprocessing/LTKPreprocessor.cpp \
 		   reco/shaperec/common/LTKShapeRecoUtil.cpp \
 		   reco/shaperec/common/LTKShapeRecoConfig.cpp \
 		   reco/shaperec/common/LTKShapeRecoResult.cpp \
 		   reco/shaperec/common/LTKShapeSample.cpp \
 		   reco/shaperec/common/LTKShapeRecognizer.cpp \
+		   reco/shaperec/featureextractor/pointfloat/PointFloatShapeFeatureExtractor.cpp \
+		   reco/shaperec/featureextractor/pointfloat/PointFloatShapeFeature.cpp \
+		   reco/shaperec/featureextractor/pointfloat/PointFloat.cpp \
 		   reco/shaperec/featureextractor/common/LTKShapeFeatureExtractor.cpp \
 		   reco/shaperec/featureextractor/common/LTKShapeFeatureExtractorFactory.cpp \
 		   reco/shaperec/nn/NN.cpp \

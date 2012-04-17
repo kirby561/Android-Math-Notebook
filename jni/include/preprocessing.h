@@ -66,7 +66,7 @@
  * @return the address of the new object create of type LTKPreprocessorInterface.
  */
 
-extern "C" PREPROCESSING_API int createPreprocInst(const LTKControlInfo& controlInfo,
+extern "C" PREPROCESSING_API int createPreprocInst2(const LTKControlInfo& controlInfo,
                         LTKPreprocessorInterface** preprocPtr);
 
 

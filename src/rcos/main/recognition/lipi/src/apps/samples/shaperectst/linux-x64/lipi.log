@@ -1,4 +1,0 @@
-Thu Feb 23 00:50:17 2012 LTKInkFileReader.cpp(648): [Error] Error : LTKInkFileReader::readUnipenInkFileWithAnnotation()
-Thu Feb 23 00:50:17 2012 NNShapeRecognizer.cpp(2025): [Error] Error: 135  Input trace is empty NNShapeRecognizer::recognize()
-Thu Feb 23 01:01:15 2012 LTKInkFileReader.cpp(648): [Error] Error : LTKInkFileReader::readUnipenInkFileWithAnnotation()
-Thu Feb 23 01:01:15 2012 NNShapeRecognizer.cpp(2025): [Error] Error: 135  Input trace is empty NNShapeRecognizer::recognize()

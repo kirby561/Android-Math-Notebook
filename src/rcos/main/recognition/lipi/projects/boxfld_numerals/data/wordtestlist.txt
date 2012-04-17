@@ -1,2 +1,0 @@
-$LIPI_ROOT\projects\boxfld_numerals\data\testword.txt dummy
-$LIPI_ROOT\projects\boxfld_numerals\data\testwordsecond.txt dummy

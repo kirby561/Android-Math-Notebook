@@ -77,8 +77,11 @@ JNIEXPORT void JNICALL Java_rcos_main_recognition_LipiTKJNIInterface_initializeN
 		LOGE(LOG_JNI, "Error loading model data");
 		return; // Possibly should delete some stuff before returning
 	}
+	LOGD(LOG_JNI,"Successfully Initialized LIPI TK");
 }
 
 JNIEXPORT jobjectArray JNICALL Java_rcos_main_recognition_LipiTKJNIInterface_recognizeNative(JNIEnv *env, jobject this_object, jobject strokeobj) {
+	//do amazing things here
+
 
 }

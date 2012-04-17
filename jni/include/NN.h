@@ -80,7 +80,7 @@ class LTKShapeRecognizer;
  *
  * @return  LTKShapeRecognizer - an instance of type LTKShapeRecognizer.
  */
-extern "C" NN_API int createShapeRecognizer(const LTKControlInfo& controlInfo, 
+extern "C" NN_API int createShapeRecognizerNN(const LTKControlInfo& controlInfo,
 												   LTKShapeRecognizer** pReco );
 
 /**

@@ -58,6 +58,7 @@
 #include "LTKOSUtilFactory.h"
 #include "LTKOSUtil.h"
 #include "LTKLoggerUtil.h"
+#include "NN.h"
 
 // Allow logging support
 #include <android/log.h>
@@ -153,7 +154,6 @@ int LTKLipiEngineModule::initializeLipiEngine()
 	LOGD("LIPI INIT","333333");
     errorCode = configureLogger();	// Configure the logger
     LOGD("LIPI INIT","44444444");
-    LOG(LTKLogger::LTK_LOGLEVEL_INFO)<<	"TEST LINE" << "electric slide";
 
 	if(errorCode !=SUCCESS)
 	{
@@ -162,7 +162,6 @@ int LTKLipiEngineModule::initializeLipiEngine()
 	}
 	else
 	{
-		LOG(LTKLogger::LTK_LOGLEVEL_INFO)<<	"LTKLipiEngineModule::initializeLipiEngine()" << endl;
 		LOG(LTKLogger::LTK_LOGLEVEL_INFO)<<	"LTKLipiEngineModule::initializeLipiEngine()" << endl;
 
 		//LOGD("LIPI INIT","LTKLipiEngineModule::initializeLipiEngine()");
@@ -233,7 +232,7 @@ int LTKLipiEngineModule::createShapeRecognizer(const string& strProjName,
 {
 	LOG(LTKLogger::LTK_LOGLEVEL_INFO)<<
 		"Entering: LTKLipiEngineModule::createShapeRecognizer()"<<endl;
-	
+
 	int errorCode;
     int iResult = 0;
 	void *dllHandler = NULL;
@@ -244,6 +243,9 @@ int LTKLipiEngineModule::createShapeRecognizer(const string& strProjName,
 	//Validating Project names and profile names
 	errorCode = validateProjectAndProfileNames(strProjectName, strProfileName,
 											   "SHAPEREC", recognizerName); 
+
+	LOG( LTKLogger::LTK_LOGLEVEL_INFO) << "recognizerName:" << recognizerName << endl;
+
 	if (errorCode != SUCCESS)
 	{
 		LOG( LTKLogger::LTK_LOGLEVEL_ERR) << 
@@ -253,7 +255,9 @@ int LTKLipiEngineModule::createShapeRecognizer(const string& strProjName,
 		LTKReturnError(errorCode);
 	}
 
-    // Load the dlaal of the shape recognizer
+	//DONT NEED THIS
+	/*
+    // Load the dll of the shape recognizer
 	errorCode = loadRecognizerDLL(recognizerName, &dllHandler);
     
 	if( errorCode!= SUCCESS)
@@ -264,6 +268,7 @@ int LTKLipiEngineModule::createShapeRecognizer(const string& strProjName,
 
 		LTKReturnError(errorCode);
 	}
+
 
 	// Map Algo DLL functions...
 	errorCode = mapShapeAlgoModuleFunctions(dllHandler);
@@ -276,7 +281,7 @@ int LTKLipiEngineModule::createShapeRecognizer(const string& strProjName,
 
 		LTKReturnError(errorCode);
 	}
-
+	*/
     // Create control Info object
     char currentVersion[VERSION_STR_LEN];
     int iMajor, iMinor, iBugfix;
@@ -290,21 +295,25 @@ int LTKLipiEngineModule::createShapeRecognizer(const string& strProjName,
     controlInfo.profileName = strProfileName;
     controlInfo.toolkitVersion = currentVersion;
     
-	// Call recognition module's createShapeRecognizer(); 
-	errorCode = module_createShapeRecognizer(controlInfo,outShapeRecoObj);
+	// Call recognition module's createShapeRecognizer();
+    //TODO try catch here
+
+    //*outShapeRecoObj = new NNShapeRecognizer(controlInfo);
     
+	errorCode = createShapeRecognizerNN(controlInfo,outShapeRecoObj);
+
     if(errorCode !=SUCCESS)
 	{
 		LOG( LTKLogger::LTK_LOGLEVEL_ERR) << 
         "Error: "<<	getErrorMessage(ECREATE_SHAPEREC) << " "<< recognizerName <<
 		"LTKLipiEngineModule::createShapeRecognizer()"<<endl;
 
-		m_OSUtilPtr->unloadSharedLib(dllHandler);
+		//m_OSUtilPtr->unloadSharedLib(dllHandler);
         
 		LTKReturnError(ECREATE_SHAPEREC);	
 	}
 
-	addModule(*outShapeRecoObj, dllHandler);
+	//addModule(*outShapeRecoObj, dllHandler);
 
 	LOG(LTKLogger::LTK_LOGLEVEL_INFO)<<
 		"Exiting: LTKLipiEngineModule::createShapeRecognizer()"<<endl;
@@ -331,6 +340,10 @@ int LTKLipiEngineModule::createShapeRecognizer(string &strLogicalProjectName, LT
 	LOG(LTKLogger::LTK_LOGLEVEL_INFO)<<
 		"Entering: LTKLipiEngineModule::createShapeRecognizer()"<<endl;
 	//LOG(LTKLogger::LTK_LOGLEVEL_INFO) << "HEY";
+
+
+	LOG(LTKLogger::LTK_LOGLEVEL_INFO)<<
+			"strLogicalProjectName:" << strLogicalProjectName << endl;
 
 	if(strLogicalProjectName.empty())
 	{		
@@ -364,6 +377,9 @@ int LTKLipiEngineModule::createShapeRecognizer(string &strLogicalProjectName, LT
 
 		LTKReturnError(errorCode);
 	}
+
+	LOG(LTKLogger::LTK_LOGLEVEL_INFO)<<	"TEST MESSAEGE" << endl;
+
 
 	LOG(LTKLogger::LTK_LOGLEVEL_INFO)<<
 		"Exiting: LTKLipiEngineModule::createShapeRecognizer()"<<endl;
@@ -1130,7 +1146,7 @@ int LTKLipiEngineModule::loadRecognizerDLL(const string& recognizerName,
 		"LTKLipiEngineModule::loadRecognizerDLL()"<<endl;
 
 		LTKReturnError(ELOAD_SHAPEREC_DLL); 
-	}
+	}LOG(LTKLogger::LTK_LOGLEVEL_INFO)<<	"LTKLipiEngineModule::initializeLipiEngine()" << endl;
     
 	LOG(LTKLogger::LTK_LOGLEVEL_DEBUG)<<
 		"Exiting: LTKLipiEngineModule::loadRecognizerDLL()"<<endl;

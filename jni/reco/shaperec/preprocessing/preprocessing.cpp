@@ -75,7 +75,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 * CHANGE HISTROY
 * Author			Date				Description of change
 *************************************************************************************/
-int createPreprocInst(const LTKControlInfo& controlInfo,
+int createPreprocInst2(const LTKControlInfo& controlInfo,
                         LTKPreprocessorInterface** preprocPtr)
 {
 

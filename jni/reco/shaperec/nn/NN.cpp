@@ -68,7 +68,7 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 * CHANGE HISTORY
 * Author			Date				Description
 *************************************************************************************/
-int createShapeRecognizer(const LTKControlInfo& controlInfo,
+int createShapeRecognizerNN(const LTKControlInfo& controlInfo,
 								 LTKShapeRecognizer** ptrObj )
 {
 	try
