@@ -1,5 +1,6 @@
 package rcos.main.recognition;
 
+import android.graphics.PointF;
 import rcos.main.Stroke;
 
 public class LipiTKJNIInterface {
@@ -26,6 +27,21 @@ public class LipiTKJNIInterface {
 	
 	public void initialize() {
 			initializeNative(_lipiDirectory, _project);
+			
+			Stroke[] strokes = new Stroke[2];
+			Stroke s = new Stroke();
+			s.addPoint(new PointF(0.0f,1.0f));
+			s.addPoint(new PointF(0.5f,0.0f));
+			s.addPoint(new PointF(1.0f,1.0f));
+			
+			Stroke s2 = new Stroke();
+			s2.addPoint(new PointF(0.0f,0.5f));
+			s2.addPoint(new PointF(1.0f,0.5f));
+			
+			strokes[0] = s;
+			strokes[1] = s2;
+			
+			recognizeNative(strokes, strokes.length);
 	}
 	
 	public LipitkResult[] recognize(Stroke[] strokes) {
@@ -39,4 +55,5 @@ public class LipiTKJNIInterface {
 	
 	// Returns a list of results when recognizing the given list of strokes
 	private native LipitkResult[] recognizeNative(Stroke[] strokes, int numJStrokes);
+								  
 }

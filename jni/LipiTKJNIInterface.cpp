@@ -43,7 +43,7 @@ LTKShapeRecognizer* gShapeReco = NULL;
 
 extern "C" {
 	JNIEXPORT void JNICALL Java_rcos_main_recognition_LipiTKJNIInterface_initializeNative(JNIEnv *env, jobject this_object, jstring lipiDirectory, jstring project);
-	JNIEXPORT jobjectArray JNICALL Java_rcos_main_recognition_LipiTKJNIInterface_recognizeNative(JNIEnv *env, jobject this_object, jobject strokeobj);
+	JNIEXPORT jobjectArray JNICALL Java_rcos_main_recognition_LipiTKJNIInterface_recognizeNative(JNIEnv *env, jobject this_object, jobjectArray strokeList, jint numJStrokes);
 }
 
 JNIEXPORT void JNICALL Java_rcos_main_recognition_LipiTKJNIInterface_initializeNative(JNIEnv *env, jobject this_object, jstring lipiDirectory, jstring project) {
@@ -109,6 +109,7 @@ JNIEXPORT jobjectArray JNICALL Java_rcos_main_recognition_LipiTKJNIInterface_rec
 	ltkcapturedevice.setXDPI(gXDpi);
 	ltkcapturedevice.setYDPI(gYDpi);
 
+	// ?? THIS NEEDS TO BE GIVEN PROPER VALUES
 	screenContext.setBboxLeft(0);
 	screenContext.setBboxBottom(0);
 	screenContext.setBboxRight(480);
