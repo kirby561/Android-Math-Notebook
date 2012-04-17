@@ -28,9 +28,15 @@ public class LipiTKJNIInterface {
 			initializeNative(_lipiDirectory, _project);
 	}
 	
+	public LipitkResult[] recognize(Stroke[] strokes) {
+		
+		
+		return null;
+	}
+	
 	// Initializes the LipiTKEngine in native code
 	private native void initializeNative(String lipiDirectory, String project);
 	
 	// Returns a list of results when recognizing the given list of strokes
-	public native LipitkResult[] recognizeNative(Stroke[] strokes);
+	private native LipitkResult[] recognizeNative(Stroke[] strokes, int numJStrokes);
 }
