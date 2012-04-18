@@ -85,13 +85,23 @@ JNIEXPORT void JNICALL Java_rcos_main_recognition_LipiTKJNIInterface_initializeN
 
 JNIEXPORT jobjectArray JNICALL Java_rcos_main_recognition_LipiTKJNIInterface_recognizeNative(JNIEnv *env, jobject this_object, jobjectArray strokeList, jint numJStrokes) {
 	// Get the Stroke class methods
-	jclass strokeClass = env->FindClass("LStroke;");
+	jobject stroke1 = env->GetObjectArrayElement(strokeList, 0);
+	LOGD(LOG_JNI, "Getting the stroke class");
+	//jclass strokeClass = env->FindClass("Lrcos/main/Stroke;");
+	jclass strokeClass = env->GetObjectClass(stroke1);
+	if(strokeClass == NULL)
+		LOGE(LOG_JNI, "strokeClass is null...");
+	LOGD(LOG_JNI, "Getting the getNumPoints method");
 	jmethodID getNumPointsMethodID = env->GetMethodID(strokeClass, "getNumberOfPoints", "()I");
+	LOGD(LOG_JNI, "Getting the getPointAt method");
 	jmethodID getPointsAtMethodID = env->GetMethodID(strokeClass, "getPointAt", "()Landroid/graphics/PointF;");
 
 	// Get Point class methods
+	LOGD(LOG_JNI, "Getting the PointF class");
 	jclass pointFClass = env->FindClass("Landroid/graphics/PointF;");
+	LOGD(LOG_JNI, "Getting the xField");
 	jfieldID xFieldID = env->GetFieldID(pointFClass, "x", "F");
+	LOGD(LOG_JNI, "Getting the yField");
 	jfieldID yFieldID = env->GetFieldID(pointFClass, "y", "F");
 
 	// Get the number of strokes
