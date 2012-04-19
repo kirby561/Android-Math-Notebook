@@ -138,6 +138,7 @@ JNIEXPORT jobjectArray JNICALL Java_rcos_main_recognition_LipiTKJNIInterface_rec
 			jobject point = env->CallObjectMethod(stroke, getPointsAtMethodID, p);
 			pointVec.push_back(env->GetFloatField(point, xFieldID));
 			pointVec.push_back(env->GetFloatField(point, yFieldID));
+			LOGD(LOG_JNI, "X and Y are: %f, %f", numPoints);
 			trace.addPoint(pointVec);
 			pointVec.clear();
 		}
@@ -153,12 +154,22 @@ JNIEXPORT jobjectArray JNICALL Java_rcos_main_recognition_LipiTKJNIInterface_rec
 
 	LOGD(LOG_JNI, "Recognized...");
 
-	int id;
-	for(int x=0;x<outResults.size();x++)
-	{
-		id = outResults[x].getShapeId();
+	// Build an object array to return
+	jclass resultClass = env->FindClass("rcos/main/recognition/LipitkResult");
 
+     	jfieldID id = env->GetFieldID(resultClass, "Id", "I");
+    	jfieldID confidence = env->GetFieldID(resultClass, "Confidence", "F");
+			
+	jobjectArray resultSetArray = env->NewObjectArray(outResults.size(), resultClass, NULL);
+	jmethodID constructorMethodID = env->GetMethodID(resultClass, "<init>", "()V");
+		  
+	for (int k = 0; k < outResults.size(); k++) {
+		jobject obj = env->NewObject(resultClass, constructorMethodID);
+		env->SetIntField(obj, id, outResults[k].getShapeId());
+		env->SetFloatField(obj, confidence, outResults[k].getConfidence());
+		env->SetObjectArrayElement(resultSetArray, k, obj);
+		obj = NULL;
 	}
 
-	return NULL;
+	return resultSetArray;
 }

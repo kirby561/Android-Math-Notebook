@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import rcos.main.recognition.LipiTKJNIInterface;
 import rcos.main.recognition.PointMath;
+import rcos.main.recognition.Symbol;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -37,7 +38,8 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	private Matrix _viewTransform = new Matrix();
 	private Matrix _invViewTransform = new Matrix();
 	private int _mode;
-	LipiTKJNIInterface _lipitkInterface;
+	private LipiTKJNIInterface _lipitkInterface;
+	private Paint _textPaint;
 	
 	// ?? Debugging
 	private String DebugString = "";
@@ -64,7 +66,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	public final int Zooming = 3;
 
 	// Constants
-	public float TranslationPressureThreshold = 0.07f;
+	public float TranslationPressureThreshold = 0.20f;//0.07f;
 
 	public Object DrawingLock = new Object();
 
@@ -78,11 +80,14 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
 	private void initialize() {
 		// Initialize the drawing thread and the strokes array
-		_page = new Page();
 		_currentStroke = null;
 		_origInvTransform = null;
 		_gestureState = None;
 		_mode = NotesCanvas.FreehandMode;
+		
+		_textPaint = new Paint();
+		_textPaint.setColor(Color.BLUE);
+		_textPaint.setTextSize(60);
 
 		// Register for surface callbacks
 		getHolder().addCallback(this);
@@ -95,6 +100,8 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		Log.d("JNI", "Path: " + path);
 		_lipitkInterface = new LipiTKJNIInterface(path, "SHAPEREC_ALPHANUM");
 		_lipitkInterface.initialize();
+		
+		_page = new Page(_lipitkInterface);
 	}
 
 	public NotesCanvas(Context context) {
@@ -112,7 +119,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		initialize();
 	}
 
-	public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
+	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
 	}
 
@@ -396,6 +403,9 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 					_currentStroke.addPoint(p);
 
 					_page.addStroke(_currentStroke);
+					
+					// Start or restart the current recognition timer
+					
 				} else if (_gestureState == Panning) {
 					float x = event.getX();
 					float y = event.getY();
@@ -499,6 +509,11 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 			// Just draw all the strokes we're keeping track of for now
 			for (Stroke stroke : _page.getStrokes())
 				drawStroke(canvas, stroke, boundingBox);
+			
+			String symbolString = "";
+			for (Symbol symbol : _page.getSymbols()) 
+				symbolString += symbol.getCharacter();
+			canvas.drawText(symbolString, 50, 50, _textPaint);			
 
 			if (_gestureState == Drawing)
 				drawStroke(canvas, _currentStroke, boundingBox);
