@@ -90,7 +90,7 @@ JNIEXPORT jobjectArray JNICALL Java_rcos_main_recognition_LipiTKJNIInterface_rec
 	LOGD(LOG_JNI, "Getting the getNumPoints method");
 	jmethodID getNumPointsMethodID = env->GetMethodID(strokeClass, "getNumberOfPoints", "()I");
 	LOGD(LOG_JNI, "Getting the getPointAt method");
-	jmethodID getPointsAtMethodID = env->GetMethodID(strokeClass, "getPointAt", "()android/graphics/PointF");
+	jmethodID getPointsAtMethodID = env->GetMethodID(strokeClass, "getPointAt", "(I)Landroid/graphics/PointF;");
 
 	// Get Point class methods
 	LOGD(LOG_JNI, "Getting the PointF class");
@@ -137,6 +137,7 @@ JNIEXPORT jobjectArray JNICALL Java_rcos_main_recognition_LipiTKJNIInterface_rec
 			jobject point = env->CallObjectMethod(stroke, getPointsAtMethodID, p);
 			pointVec.push_back(env->GetFloatField(point, xFieldID));
 			pointVec.push_back(env->GetFloatField(point, yFieldID));
+			LOGD(LOG_JNI, "X and Y are: %f, %f", numPoints);
 			trace.addPoint(pointVec);
 			pointVec.clear();
 		}
