@@ -90,7 +90,7 @@ JNIEXPORT jobjectArray JNICALL Java_rcos_main_recognition_LipiTKJNIInterface_rec
 	LOGD(LOG_JNI, "Getting the getNumPoints method");
 	jmethodID getNumPointsMethodID = env->GetMethodID(strokeClass, "getNumberOfPoints", "()I");
 	LOGD(LOG_JNI, "Getting the getPointAt method");
-	jmethodID getPointsAtMethodID = env->GetMethodID(strokeClass, "getPointAt", "()android/graphics/PointF");
+	jmethodID getPointsAtMethodID = env->GetMethodID(strokeClass, "getPointAt", "(I)Landroid/graphics/PointF;");
 
 	// Get Point class methods
 	LOGD(LOG_JNI, "Getting the PointF class");
@@ -106,6 +106,7 @@ JNIEXPORT jobjectArray JNICALL Java_rcos_main_recognition_LipiTKJNIInterface_rec
 	LOGD(LOG_JNI, "Number of strokes: %d", numStrokes);
 
 	vector<int> outSubSetOfClasses;
+
 	vector<LTKShapeRecoResult> outResults;
 	outResults.reserve(NUMBER_OF_RESULTS);
 
@@ -151,6 +152,13 @@ JNIEXPORT jobjectArray JNICALL Java_rcos_main_recognition_LipiTKJNIInterface_rec
 	int iResult = gShapeReco->recognize(traceGroup, screenContext, outSubSetOfClasses, CONFIDENCE_THRESHOLD, NUMBER_OF_RESULTS, outResults);
 
 	LOGD(LOG_JNI, "Recognized...");
+
+	int id;
+	for(int x=0;x<outResults.size();x++)
+	{
+		id = outResults[x].getShapeId();
+
+	}
 
 	return NULL;
 }

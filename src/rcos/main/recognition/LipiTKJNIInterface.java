@@ -1,6 +1,11 @@
 package rcos.main.recognition;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+
 import android.graphics.PointF;
+import android.util.Log;
 import rcos.main.Stroke;
 
 public class LipiTKJNIInterface {
@@ -25,8 +30,43 @@ public class LipiTKJNIInterface {
 		_project = project;	
 	}
 	
+	public String getSymbolName(int id,String project_config_dir)
+	{
+		String line;
+		int temp;
+		String [] splited_line= null;
+		try
+		{
+			File map_file = new File(project_config_dir+"unicodeMapfile_alphanumeric.ini");
+			BufferedReader readIni = new BufferedReader(new FileReader(map_file));
+			readIni.readLine();
+			readIni.readLine();
+			readIni.readLine();
+			readIni.readLine();
+			while((line=readIni.readLine())!=null)
+			{
+				splited_line = line.split(" ");
+				Log.d("JNI_LOG","split 0="+splited_line[0]);
+				Log.d("JNI_LOG","split 1="+splited_line[1]);
+				splited_line[0] = splited_line[0].substring(0, splited_line[0].length()-1); //trim out = sign
+				if(splited_line[0].equals((new Integer(id)).toString()))
+				{
+					splited_line[1] = splited_line[1].substring(2);
+					temp = Integer.parseInt(splited_line[1], 16);
+					return String.valueOf((char)temp);
+				}
+			}
+		}
+		catch(Exception ex)
+		{
+			Log.d("JNI_LOG","Exception in getSymbolName Function"+ex.toString());
+			return "-1";
+		}
+		return "0";
+	}
+	
 	public void initialize() {
-			initializeNative(_lipiDirectory, _project);
+		initializeNative(_lipiDirectory, _project);
 			
 			Stroke[] strokes = new Stroke[2];
 			Stroke s = new Stroke();
@@ -41,6 +81,7 @@ public class LipiTKJNIInterface {
 			strokes[0] = s;
 			strokes[1] = s2;
 			
+
 			recognizeNative(strokes, strokes.length);
 	}
 	
