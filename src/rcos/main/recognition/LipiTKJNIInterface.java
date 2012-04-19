@@ -42,24 +42,27 @@ public class LipiTKJNIInterface {
 //			strokes[0] = s;
 //			strokes[1] = s2;
 			
-			Stroke[] strokes = new Stroke[1];
-			Stroke s = new Stroke();
-			s.addPoint(new PointF(240.0f, 10.0f));
-			s.addPoint(new PointF(240.0f, 790.0f));
-			
-			strokes[0] = s;
-			
-			LipitkResult[] results = recognizeNative(strokes, strokes.length);
-			
-			for (LipitkResult result : results) {
-				Log.e("jni", "ShapeID = " + result.Id + " Confidence = " + result.Confidence);			
-			}
+//			Stroke[] strokes = new Stroke[1];
+//			Stroke s = new Stroke();
+//			s.addPoint(new PointF(240.0f, 10.0f));
+//			s.addPoint(new PointF(240.0f, 790.0f));
+//			
+//			strokes[0] = s;
+//			
+//			LipitkResult[] results = recognizeNative(strokes, strokes.length);
+//			
+//			for (LipitkResult result : results) {
+//				Log.e("jni", "ShapeID = " + result.Id + " Confidence = " + result.Confidence);			
+//			}
 	}
 	
 	public LipitkResult[] recognize(Stroke[] strokes) {
+		LipitkResult[] results = recognizeNative(strokes, strokes.length);
 		
+		for (LipitkResult result : results)
+			Log.d("jni", "ShapeID = " + result.Id + " Confidence = " + result.Confidence);			
 		
-		return null;
+		return results;
 	}
 	
 	// Initializes the LipiTKEngine in native code

@@ -1,38 +1,57 @@
 package rcos.main;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.os.Bundle;
+import android.util.Log;
+import rcos.main.recognition.Symbol;
+import rcos.main.recognition.LipiTKJNIInterface;
+import rcos.main.recognition.LipitkResult;
 
 // A page contains what strokes to draw,
 //    and all the information about that
 //    notbook page.
 public class Page {
+	private static final long RecognitionTimeout = 400; // milliseconds
+
 	private ArrayList<Stroke> _strokes;
+	private Stroke[] _recognitionStrokes;
+	public Object StrokesLock = new Object();
+
 	private Stroke[] _background;
-	
-	public Page() {
+	private ArrayList<Symbol> _symbols;
+	private Timer _timer;
+	private LipiTKJNIInterface _recognizer;
+
+	public Page(LipiTKJNIInterface recognizer) {
 		_strokes = new ArrayList<Stroke>();
+		_symbols = new ArrayList<Symbol>();
 		_background = getDefaultBackground();
+		_timer = null;
+		_recognizer = recognizer;
 	}
-	
+
 	public Page(Bundle page) {		
 		_strokes = new ArrayList<Stroke>();
-		
+
 		// Restore the strokes
 		int count = page.getInt("StrokeCount");
 		for (int i = 0; i < count; i++) 
 			_strokes.add(new Stroke(page.getBundle("Stroke" + i)));
-		
+
 		// Bundle the background
 		int backgroundCount = page.getInt("BackgroundCount");
 		_background = new Stroke[backgroundCount];
 		for (int i = 0; i < _background.length; i++)
 			_background[i] = new Stroke(page.getBundle("BackgroundStroke" + i));
 	}
-	
+
 	// Returns a list of strokes that creates a standard
 	// 8.5x11 inch notebook page
 	private Stroke[] getDefaultBackground() {
@@ -68,31 +87,76 @@ public class Page {
 
 		return result;
 	}
-	
+
 	public Bundle bundle() {
 		Bundle result = new Bundle();
-		
+
 		// Bundle the strokes
 		result.putInt("StrokeCount", _strokes.size());
 		for (int i = 0; i < _strokes.size(); i++) 
 			result.putBundle("Stroke" + i, _strokes.get(i).bundle());
-		
+
 		// Bundle the background
 		result.putInt("BackgroundCount", _background.length);
 		for (int i = 0; i < _background.length; i++)
 			result.putBundle("BackgroundStroke" + i, _background[i].bundle());
-		
+
 		return result;
 	}
-	
+
 	public void addStroke(Stroke stroke) {
-		_strokes.add(stroke);
+		synchronized (StrokesLock) {
+			_strokes.add(stroke);
+
+			// Start a timer for recognition (or restart it if it's going)
+			if (_timer != null) {
+				_timer.cancel();
+				_timer.purge();
+				_timer = null;
+
+				for (Stroke s : _recognitionStrokes)
+					_strokes.add(s);
+			}
+			
+			_recognitionStrokes = new Stroke[_strokes.size()];
+			for (int s = 0; s < _strokes.size(); s++)
+				_recognitionStrokes[s] = _strokes.get(s);
+			_strokes.clear();
+
+			TimerTask task = new TimerTask() {
+				@Override
+				public void run() {
+					synchronized (StrokesLock) {
+						// Recognize our current strokes
+						LipitkResult[] results = _recognizer.recognize(_recognitionStrokes);
+						
+						for (LipitkResult result : results) {
+							Log.e("jni", "ShapeID = " + result.Id + " Confidence = " + result.Confidence);			
+						}
+						
+						// ?? Replace this with the symbol function: getSymbol(results[0].Id)				
+						String character = "[" + results[0].Id + "]";
+						
+						// Make a symbol out of these strokes
+						Symbol s = new Symbol(_recognitionStrokes, character);
+						_symbols.add(s);
+					}
+				}		
+			};
+			
+			_timer = new Timer();
+			_timer.schedule(task, RecognitionTimeout);
+		}
 	}
-	
+
+	public ArrayList<Symbol> getSymbols() {
+		return _symbols;		
+	}
+
 	public Stroke[] getBackground() {
 		return _background;
 	}
-	
+
 	public ArrayList<Stroke> getStrokes() {
 		return _strokes;
 	}
