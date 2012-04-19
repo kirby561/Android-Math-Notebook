@@ -153,5 +153,26 @@ JNIEXPORT jobjectArray JNICALL Java_rcos_main_recognition_LipiTKJNIInterface_rec
 
 	LOGD(LOG_JNI, "Recognized...");
 
-	return NULL;
+	for (int i = 0; i < outResults.size(); i++) {
+		LOGE(LOG_JNI, "Result %d: %d, confidence: %f", i, outResults.at(i).getShapeId(), outResults.at(i).getConfidence());
+	}
+
+	// Build an object array to return
+	jclass resultClass = env->FindClass("rcos/main/recognition/LipitkResult");
+
+     	jfieldID id = env->GetFieldID(resultClass, "Id", "I");
+    	jfieldID confidence = env->GetFieldID(resultClass, "Confidence", "F");
+			
+	jobjectArray resultSetArray = env->NewObjectArray(outResults.size(), resultClass, NULL);
+	jmethodID constructorMethodID = env->GetMethodID(resultClass, "<init>", "()V");
+		  
+	for (int k = 0; k < outResults.size(); k++) {
+		jobject obj = env->NewObject(resultClass, constructorMethodID);
+		env->SetIntField(obj, id, outResults[k].getShapeId());
+		env->SetFloatField(obj, confidence, outResults[k].getConfidence());
+		env->SetObjectArrayElement(resultSetArray, k, obj);
+		obj = NULL;
+	}
+
+	return resultSetArray;
 }

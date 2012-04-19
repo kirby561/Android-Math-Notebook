@@ -1,6 +1,7 @@
 package rcos.main.recognition;
 
 import android.graphics.PointF;
+import android.util.Log;
 import rcos.main.Stroke;
 
 public class LipiTKJNIInterface {
@@ -28,20 +29,31 @@ public class LipiTKJNIInterface {
 	public void initialize() {
 			initializeNative(_lipiDirectory, _project);
 			
-			Stroke[] strokes = new Stroke[2];
-			Stroke s = new Stroke();
-			s.addPoint(new PointF(0.0f,1.0f));
-			s.addPoint(new PointF(0.5f,0.0f));
-			s.addPoint(new PointF(1.0f,1.0f));
+//			Stroke[] strokes = new Stroke[2];
+//			Stroke s = new Stroke();
+//			s.addPoint(new PointF(0.0f,1.0f));
+//			s.addPoint(new PointF(0.5f,0.0f));
+//			s.addPoint(new PointF(1.0f,1.0f));
+//			
+//			Stroke s2 = new Stroke();
+//			s2.addPoint(new PointF(0.0f,0.5f));
+//			s2.addPoint(new PointF(1.0f,0.5f));
+//			
+//			strokes[0] = s;
+//			strokes[1] = s2;
 			
-			Stroke s2 = new Stroke();
-			s2.addPoint(new PointF(0.0f,0.5f));
-			s2.addPoint(new PointF(1.0f,0.5f));
+			Stroke[] strokes = new Stroke[1];
+			Stroke s = new Stroke();
+			s.addPoint(new PointF(240.0f, 10.0f));
+			s.addPoint(new PointF(240.0f, 790.0f));
 			
 			strokes[0] = s;
-			strokes[1] = s2;
 			
-			recognizeNative(strokes, strokes.length);
+			LipitkResult[] results = recognizeNative(strokes, strokes.length);
+			
+			for (LipitkResult result : results) {
+				Log.e("jni", "ShapeID = " + result.Id + " Confidence = " + result.Confidence);			
+			}
 	}
 	
 	public LipitkResult[] recognize(Stroke[] strokes) {

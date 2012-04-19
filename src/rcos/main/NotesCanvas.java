@@ -112,7 +112,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		initialize();
 	}
 
-	public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
+	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
 	}
 
