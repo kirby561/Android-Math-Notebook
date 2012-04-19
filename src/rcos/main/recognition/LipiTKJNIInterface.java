@@ -83,5 +83,9 @@ public class LipiTKJNIInterface {
 	
 	// Returns a list of results when recognizing the given list of strokes
 	private native LipitkResult[] recognizeNative(Stroke[] strokes, int numJStrokes);
+
+	public String getLipiDirectory() {
+		return _lipiDirectory;
+	}
 								  
 }

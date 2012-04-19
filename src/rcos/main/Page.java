@@ -134,9 +134,10 @@ public class Page {
 							Log.e("jni", "ShapeID = " + result.Id + " Confidence = " + result.Confidence);			
 						}
 						
-						// ?? Replace this with the symbol function: getSymbol(results[0].Id)				
-						String character = "[" + results[0].Id + "]";
-						
+						// ?? Replace this with the symbol function: getSymbol(results[0].Id)
+						String configFileDirectory = _recognizer.getLipiDirectory() + "/projects/alphanumeric/config/";
+						String character = _recognizer.getSymbolName(results[0].Id, configFileDirectory);
+						 
 						// Make a symbol out of these strokes
 						Symbol s = new Symbol(_recognitionStrokes, character);
 						_symbols.add(s);
