@@ -450,7 +450,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
 		return true;
 	}
-
+	
 	// Draws the given stroke on the given canvas
 	// uses the view transform to map the points to where 
 	// they should be on the canvas

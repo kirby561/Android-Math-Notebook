@@ -18,7 +18,7 @@ import rcos.main.recognition.LipitkResult;
 //    and all the information about that
 //    notbook page.
 public class Page {
-	private static final long RecognitionTimeout = 400; // milliseconds
+	private static final long RecognitionTimeout = 1500; // milliseconds
 
 	private ArrayList<Stroke> _strokes;
 	private Stroke[] _recognitionStrokes;
@@ -107,15 +107,17 @@ public class Page {
 	public void addStroke(Stroke stroke) {
 		synchronized (StrokesLock) {
 			_strokes.add(stroke);
+			Log.w("Page", "Added Stroke");
 
 			// Start a timer for recognition (or restart it if it's going)
 			if (_timer != null) {
 				_timer.cancel();
 				_timer.purge();
 				_timer = null;
-
-				for (Stroke s : _recognitionStrokes)
-					_strokes.add(s);
+				
+				if (_recognitionStrokes != null)
+					for (Stroke s : _recognitionStrokes)
+						_strokes.add(s);
 			}
 			
 			_recognitionStrokes = new Stroke[_strokes.size()];
@@ -128,19 +130,21 @@ public class Page {
 				public void run() {
 					synchronized (StrokesLock) {
 						// Recognize our current strokes
+						Log.w("Page", "Timer Event");
 						LipitkResult[] results = _recognizer.recognize(_recognitionStrokes);
 						
 						for (LipitkResult result : results) {
 							Log.e("jni", "ShapeID = " + result.Id + " Confidence = " + result.Confidence);			
 						}
 						
-						// ?? Replace this with the symbol function: getSymbol(results[0].Id)
 						String configFileDirectory = _recognizer.getLipiDirectory() + "/projects/alphanumeric/config/";
 						String character = _recognizer.getSymbolName(results[0].Id, configFileDirectory);
 						 
 						// Make a symbol out of these strokes
 						Symbol s = new Symbol(_recognitionStrokes, character);
 						_symbols.add(s);
+						
+						_recognitionStrokes = null;
 					}
 				}		
 			};
@@ -159,6 +163,26 @@ public class Page {
 	}
 
 	public ArrayList<Stroke> getStrokes() {
+		synchronized (StrokesLock) {	
+			if (_recognitionStrokes != null) {
+				ArrayList<Stroke> strokes = new ArrayList<Stroke>();
+				
+				for (Stroke s : _strokes)
+					strokes.add(s);
+			
+				for (Stroke s : _recognitionStrokes)
+					strokes.add(s);
+				
+				return strokes;
+			}
+		}
+		
 		return _strokes;
+	}
+
+	public void removeStroke(Stroke stroke) {
+		synchronized (StrokesLock) {
+			_strokes.remove(stroke);
+		}
 	}
 }
