@@ -27,6 +27,8 @@ public class AndroidMathNotebookActivity extends Activity {
         _btnFreehand = (ImageButton)this.findViewById(R.id.btnFreehand);
         _btnRecognition = (ImageButton)this.findViewById(R.id.btnRecognition);
         _btnMath = (ImageButton)this.findViewById(R.id.btnMath);
+        _btnUndo = (ImageButton)this.findViewById(R.id.btnUndo);
+        _btnRedo = (ImageButton)this.findViewById(R.id.btnRedo);
         
         setEventHandlers();
     }
@@ -36,6 +38,8 @@ public class AndroidMathNotebookActivity extends Activity {
         _btnFreehand.setOnClickListener(onBtnFreehandClicked);
         _btnRecognition.setOnClickListener(onBtnRecognitionClicked);
         _btnMath.setOnClickListener(onBtnMathClicked);
+        _btnUndo.setOnClickListener(onBtnUndoClicked);
+        _btnRedo.setOnClickListener(onBtnRedoClicked);
     }
     
     private void resetModeButtonStates() {
@@ -66,6 +70,18 @@ public class AndroidMathNotebookActivity extends Activity {
         	resetModeButtonStates();
         	_btnMath.setImageResource(R.drawable.math_active);
         	_canvas.setMode(NotesCanvas.MathMode);
+		}
+    };
+    
+    private View.OnClickListener onBtnUndoClicked = new View.OnClickListener() {
+		public void onClick(View v) {
+        	_canvas.undo();
+		}
+    };
+    
+    private View.OnClickListener onBtnRedoClicked = new View.OnClickListener() {
+		public void onClick(View v) {
+        	_canvas.redo();
 		}
     };
     
@@ -156,4 +172,6 @@ public class AndroidMathNotebookActivity extends Activity {
     private ImageButton _btnFreehand;
     private ImageButton _btnRecognition;
     private ImageButton _btnMath;
+    private ImageButton _btnUndo;
+    private ImageButton _btnRedo;
 }

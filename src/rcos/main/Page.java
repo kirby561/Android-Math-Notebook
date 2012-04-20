@@ -28,6 +28,7 @@ public class Page {
 	private ArrayList<Symbol> _symbols;
 	private Timer _timer;
 	private LipiTKJNIInterface _recognizer;
+	private boolean _enableRecognition = false;
 
 	public Page(LipiTKJNIInterface recognizer) {
 		_strokes = new ArrayList<Stroke>();
@@ -35,6 +36,14 @@ public class Page {
 		_background = getDefaultBackground();
 		_timer = null;
 		_recognizer = recognizer;
+	}
+	
+	public void enableRecognition() {
+		_enableRecognition = true;
+	}
+	
+	public void disableRecognition() {
+		_enableRecognition = false;
 	}
 
 	public Page(Bundle page) {		
@@ -109,6 +118,9 @@ public class Page {
 			_strokes.add(stroke);
 			Log.w("Page", "Added Stroke");
 
+			if (!_enableRecognition)
+				return;
+			
 			// Start a timer for recognition (or restart it if it's going)
 			if (_timer != null) {
 				_timer.cancel();

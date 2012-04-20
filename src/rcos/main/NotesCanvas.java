@@ -3,6 +3,7 @@ package rcos.main;
 import java.io.File;
 import java.util.ArrayList;
 
+import rcos.main.commands.AddStrokeCommand;
 import rcos.main.recognition.LipiTKJNIInterface;
 import rcos.main.recognition.PointMath;
 import rcos.main.recognition.Symbol;
@@ -40,7 +41,8 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	private int _mode;
 	private LipiTKJNIInterface _lipitkInterface;
 	private Paint _textPaint;
-	
+	private CommandManager _commandManager = new CommandManager(256);
+
 	// ?? Debugging
 	private String DebugString = "";
 
@@ -72,6 +74,17 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
 	public void setMode(int mode) {
 		_mode = mode;
+
+		switch (mode) {
+		case FreehandMode:
+			_page.disableRecognition();
+			break;
+		case RecognitionMode:
+			_page.enableRecognition();
+			break;
+		case MathMode:
+			break;
+		}
 	}
 
 	public int getMode() {
@@ -84,7 +97,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		_origInvTransform = null;
 		_gestureState = None;
 		_mode = NotesCanvas.FreehandMode;
-		
+
 		_textPaint = new Paint();
 		_textPaint.setColor(Color.BLUE);
 		_textPaint.setTextSize(60);
@@ -92,7 +105,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		// Register for surface callbacks
 		getHolder().addCallback(this);
 		setFocusable(true);
-		
+
 		// Initialize lipitk
 		Context context = getContext();
 		File externalFileDir = context.getExternalFilesDir(null);
@@ -100,7 +113,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		Log.d("JNI", "Path: " + path);
 		_lipitkInterface = new LipiTKJNIInterface(path, "SHAPEREC_ALPHANUM");
 		_lipitkInterface.initialize();
-		
+
 		_page = new Page(_lipitkInterface);
 	}
 
@@ -128,13 +141,13 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		_drawingThread.setRunning(true);
 		_drawingThread.start();
 	}
-	
+
 	public void stop() {
 		boolean retry = true;
-		
+
 		if (_drawingThread == null)
 			return; // Nothing to do, start hasn't been called
-		
+
 		_drawingThread.setRunning(false);
 		while (retry) {
 			try {
@@ -145,13 +158,21 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 			}
 		}
 	}
-	
+
 	public void surfaceCreated(SurfaceHolder holder) {
 		start();
 	}
 
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		stop();
+	}
+
+	public void undo() {
+		_commandManager.undo();
+	}
+
+	public void redo() {
+		_commandManager.redo();
 	}
 
 	// Updates the inverse if applicable
@@ -246,7 +267,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		_viewTransform = new Matrix(viewTransform);
 		_invViewTransform = null;
 	}
-	
+
 	// Gets the X scale of the given transform
 	public float getScale(Matrix transform) {
 		float[] vals = new float[9];
@@ -281,7 +302,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 				} else {
 					// Put it in page coordinates
 					p = getInvViewTransform(p);
-					
+
 					_currentStroke = new Stroke();
 					_gestureState = Drawing;
 
@@ -373,7 +394,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
 					PointF diff = getDifference(_lastSpot, p);
 					_lastSpot = p;
-					
+
 					// We only care about the scaling for transformations, so get this info
 					float scale = getScale(_viewTransform);
 					diff.x /= scale;
@@ -388,7 +409,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		case MotionEvent.ACTION_UP:
 			synchronized (DrawingLock) {
 				updateInverseViewTransform();
-				
+
 				if (_gestureState == Drawing) {
 					float x = event.getX();
 					float y = event.getY();
@@ -402,10 +423,12 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 					// Add the point to the current stroke
 					_currentStroke.addPoint(p);
 
-					_page.addStroke(_currentStroke);
-					
+					AddStrokeCommand addStrokeCommand = new AddStrokeCommand(_currentStroke, _page);
+					_commandManager.doCommand(addStrokeCommand);
+					//_page.addStroke(_currentStroke);
+
 					// Start or restart the current recognition timer
-					
+
 				} else if (_gestureState == Panning) {
 					float x = event.getX();
 					float y = event.getY();
@@ -415,7 +438,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
 					PointF diff = getDifference(_lastSpot, p);
 					_lastSpot = null;
-					
+
 					// We only care about the scaling for transformations, so get this info
 					float scale = getScale(_viewTransform);
 					diff.x /= scale;
@@ -450,7 +473,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 
 		return true;
 	}
-	
+
 	// Draws the given stroke on the given canvas
 	// uses the view transform to map the points to where 
 	// they should be on the canvas
@@ -458,9 +481,9 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	private void drawStroke(Canvas canvas, Stroke stroke, RectF boundingBox) {
 		if (stroke.getNumberOfPoints() < 2)
 			return;
-		
+
 		RectF sbb = stroke.getBoundingBox();
-		
+
 		// Make sure the stroke even intersects/is inside the bounding box before
 		// drawing it
 		if (!(RectF.intersects(sbb, boundingBox) || sbb.contains(boundingBox) || boundingBox.contains(sbb)))
@@ -469,7 +492,7 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		for (int pIndex = 0; pIndex < stroke.getNumberOfPoints() - 1; pIndex++) {
 			PointF p1 = stroke.getPointAt(pIndex);
 			PointF p2 = stroke.getPointAt(pIndex + 1);
-			
+
 			// Make sure this line is actually in the view before drawing it
 			if (!PointMath.lineSegmentIntersectsRect(p1,  p2, boundingBox)) continue;
 
@@ -490,14 +513,14 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 		// Draw the data
 		synchronized(DrawingLock) {
 			updateInverseViewTransform();
-			
+
 			// Compute the bounding box of the view in page coordinates
 			PointF topLeft = new PointF(0,0);
 			PointF bottomRight = new PointF(canvas.getWidth(), canvas.getHeight());
 			topLeft = getInvViewTransform(topLeft);
 			bottomRight = getInvViewTransform(bottomRight);
 			RectF boundingBox = new RectF(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
-			
+
 			// Draw the background
 			Paint whiteFill = new Paint();
 			whiteFill.setStyle(Style.FILL_AND_STROKE);
@@ -507,17 +530,18 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 				drawStroke(canvas, stroke, boundingBox);
 
 			// Just draw all the strokes we're keeping track of for now
-			for (Stroke stroke : _page.getStrokes())
-				drawStroke(canvas, stroke, boundingBox);
-			
-			String symbolString = "";
-			for (Symbol symbol : _page.getSymbols()) 
-				symbolString += symbol.getCharacter();
-			canvas.drawText(symbolString, 50, 50, _textPaint);			
+			synchronized (_page.StrokesLock){ 
+				for (Stroke stroke : _page.getStrokes())
+					drawStroke(canvas, stroke, boundingBox);
 
+				String symbolString = "";
+				for (Symbol symbol : _page.getSymbols()) 
+					symbolString += symbol.getCharacter();
+				canvas.drawText(symbolString, 50, 50, _textPaint);			
+			}
 			if (_gestureState == Drawing)
 				drawStroke(canvas, _currentStroke, boundingBox);
-			
+
 			// ?? Debugging
 			//Paint DebugPaint = new Paint();
 			//DebugPaint.setColor(Color.GREEN);
@@ -529,17 +553,17 @@ public class NotesCanvas extends SurfaceView implements SurfaceHolder.Callback {
 	public void restoreState(Bundle savedInstanceState) {
 		// Reload the page
 		_page = new Page(savedInstanceState.getBundle("NotesCanvas_page"));
-		
+
 		// Load the current transform
 		float[] viewTransform = savedInstanceState.getFloatArray("NotesCanvas_viewTransform");
-        _viewTransform.setValues(viewTransform);
+		_viewTransform.setValues(viewTransform);
 	}
 
 	/// Saves the state of this NotesCanvas into [outState]
 	public void saveState(Bundle outState) {
 		// Save the page
 		outState.putBundle("NotesCanvas_page", _page.bundle());
-	    
+
 		// Save the current transform
 		float[] viewTransform = new float[9];
 		_viewTransform.getValues(viewTransform);
