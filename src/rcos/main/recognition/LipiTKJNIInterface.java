@@ -56,6 +56,7 @@ public class LipiTKJNIInterface {
 					return String.valueOf((char)temp);
 				}
 			}
+			readIni.close();
 		}
 		catch(Exception ex)
 		{

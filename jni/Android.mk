@@ -55,6 +55,7 @@ LOCAL_CFLAGS = -fexceptions
 
 # Here we give our module name and source file(s)
 LOCAL_MODULE    := lipitk
+LOCAL_LDLIBS    := -llog
 LOCAL_SRC_FILES := util/logger/LTKLogger.cpp \
 		   util/logger/logger.cpp \
 		   util/lib/LTKErrors.cpp \
@@ -106,5 +107,6 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
 LOCAL_MODULE    := jnilink
 LOCAL_SRC_FILES := LipiTKJNIInterface.cpp
 LOCAL_SHARED_LIBRARIES := lipitk
+LOCAL_LDLIBS    := -llog
 
 include $(BUILD_SHARED_LIBRARY)

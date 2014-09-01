@@ -7,12 +7,18 @@
 #include <ostream>
 #include <sstream>
 
-
-#define LOGD(LOG_TAG, ...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
-#define LOGV(LOG_TAG, ...) __android_log_print(ANDROID_LOG_VERBOSE, LOG_TAG, __VA_ARGS__)
-#define LOGE(LOG_TAG, ...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
-
 #define LOG_ANDROIDLOGGER_TAG "AndroidLogger"
+
+#define  LOGV(...)  __android_log_print(ANDROID_LOG_VERBOSE,LOG_ANDROIDLOGGER_TAG,__VA_ARGS__)
+#define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,LOG_ANDROIDLOGGER_TAG,__VA_ARGS__)
+#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_ANDROIDLOGGER_TAG,__VA_ARGS__)
+#define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_ANDROIDLOGGER_TAG,__VA_ARGS__)
+#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_ANDROIDLOGGER_TAG,__VA_ARGS__)
+#define  LOGTV(TAG, ...)  __android_log_print(ANDROID_LOG_VERBOSE,STRVALUE(APPEND_PIDROID_NATIVE(TAG)),__VA_ARGS__)
+#define  LOGTD(TAG, ...)  __android_log_print(ANDROID_LOG_DEBUG,STRVALUE(APPEND_PIDROID_NATIVE(TAG)),__VA_ARGS__)
+#define  LOGTI(TAG, ...)  __android_log_print(ANDROID_LOG_INFO,APPEND_PIDROID_NATIVE(TAG),__VA_ARGS__)
+#define  LOGTW(TAG, ...)  __android_log_print(ANDROID_LOG_WARN,STRVALUE(APPEND_PIDROID_NATIVE(TAG)),__VA_ARGS__)
+#define  LOGTE(TAG, ...)  __android_log_print(ANDROID_LOG_ERROR,STRVALUE(APPEND_PIDROID_NATIVE(TAG)),__VA_ARGS__)
 
 class AndroidLogger
 {

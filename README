@@ -31,10 +31,12 @@ The following instructions describe how to compile and run Android Math Notebook
      What you Need
 -------------------------
 1. Eclipse (www.eclipse.org)
-   Any version should work, but Eclipse Classic is recommended.
+	- Any version should work, but Eclipse Standard is recommended.
+	- Whatever version you get, you will need CDT installed (Comes with standard).
 2. GIT
-3. Android SDK (with 2.2 support)
-4. Android NDK
+3. Android SDK (Latest)
+4. Android NDK (r8b or higher)
+5. ADT Plugin for Eclipse (See developer.android.com)
 
 -------------------------
 Compilation Instructions
@@ -47,10 +49,12 @@ Compilation Instructions
 
 2. Open Eclipse
 3. Click File->Import
-4. Select Existing Projects into Workspace
+4. Expand General and select Existing Projects into Workspace
 5. Click Next
 6. Enter <path> in the Select Root Directory field
 7. Click Finish
-8. Click the build and run button, and it will either launch an emulator or run on your phone if it is plugged in.
+8. Add the root directory of your Android NDK to your path if it's not already (Contains "ndk-build")
+9. Add the platform-tools directory to your PATH (in <android-sdk>/platform-tools), which contains "adb".
+10. Click the build and run button, and it will either launch an emulator or run on your phone if it is plugged in.
 
 
